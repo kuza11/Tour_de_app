@@ -1,5 +1,6 @@
 .main {
-	min-height: 90vh;
+										/*height of navbar*/
+	min-height: calc(100vh - 4rem);
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -7,10 +8,10 @@
 }
 
 .nav {
-	min-height: 5vh;
 	display: flex;
 	flex-direction: row;
 	justify-content: flex-end;
+	align-items: center;
 	column-gap: 0.5rem;
 	padding: 1rem;
 }

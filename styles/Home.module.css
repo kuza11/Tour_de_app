@@ -1,12 +1,3 @@
-.main {
-										/*height of navbar*/
-	min-height: calc(100vh - 4rem);
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-}
-
 .nav {
 	display: flex;
 	flex-direction: row;
@@ -19,4 +10,35 @@
 .navButton {
 	width: 2rem;
 	height: 2rem;
+}
+
+.main {
+										/*height of navbar*/
+	min-height: calc(100vh - 4rem);
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+}
+
+.titleDiv {
+	display: flex;
+	justify-content: space-between;
+	width: 45rem;
+}
+
+.container {
+	width: 45rem;
+	display: flex;
+	flex-direction: column;
+	row-gap: 1rem;
+}
+
+.langDiv {
+	height: 5rem;
+	width: 44rem;
+	padding-right: 1rem;
+	border: white 2px solid;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
 }

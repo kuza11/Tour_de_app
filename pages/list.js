@@ -3,11 +3,11 @@ import Image from 'next/image';
 import styles from '../styles/Home.module.css';
 import rustLogo from '../public/rust_logo.jpg';
 
-export default function Home() {
+export default function List() {
   return (
 		<>
 			<Head>
-				<title>Tréninkový deník pro programátory</title>
+				<title>Tréninkový deník pro programátory | List</title>
 			</Head>
 
 			<main className={styles.main}>
@@ -39,5 +39,5 @@ export default function Home() {
 				</div>
 			</main>
 		</>
-  );
+  )
 }

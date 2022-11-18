@@ -4,7 +4,7 @@ import styles from '../styles/Home.module.css';
 import rustLogo from '../public/rust_logo.jpg';
 
 export default function Home() {
-  return (
+	return (
 		<>
 			<Head>
 				<title>Tréninkový deník pro programátory</title>

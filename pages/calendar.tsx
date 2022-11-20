@@ -3,15 +3,6 @@ import styles from '../styles/Home.module.css';
 
 
 export default function Calendar() {
-	function createCalendar() {
-		for (let i = 0; i < 10; i++) {
-			const node = document.createElement("li");
-			const textnode = document.createTextNode("Looool it works");
-			node.appendChild(textnode);
-			document.getElementById("calendar").appendChild(node);
-		}
-	}
-
 	return (
 		<>
 			<Head>
@@ -29,4 +20,13 @@ export default function Calendar() {
 			</main>
 		</>
 	);
+}
+
+function createCalendar() {
+	for (let i = 0; i < 365; i++) {
+		const node = document.createElement("li");
+		const textnode = document.createTextNode(i.toString());
+		node.appendChild(textnode);
+		document.getElementById("calendar")?.appendChild(node);
+	}
 }

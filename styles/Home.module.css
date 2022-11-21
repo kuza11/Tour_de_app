@@ -10,32 +10,21 @@
 #topBar {
 	grid-area: topBar;
 	display: grid;
-	grid-template-columns: [search]10rem auto [filter]10rem [sort]10rem;
+	grid-template-columns: [search]10rem auto [filter]max-content [sort]max-content;
+	padding: 0 1rem;
+	column-gap: 1.5rem;
 }
 
-.search {
-	grid-area: search;
+#topBar > * {
 	display: flex;
 	align-items: center;
 	height: 3rem;
 	gap: 0.5rem;
 }
 
-.filter {
-	grid-area: filter;
-	display: flex;
-	align-items: center;
-	height: 3rem;
-	gap: 0.5rem;
-}
-
-.sort {
-	grid-area: sort;
-	display: flex;
-	align-items: center;
-	height: 3rem;
-	gap: 0.5rem;
-}
+.search { grid-area: search; }
+.filter { grid-area: filter; }
+.sort { grid-area: sort; }
 
 #leftBar {
 	grid-area: leftBar;
@@ -62,9 +51,7 @@
 	list-style-type: none;
 }
 
-#main {
-	grid-area: main;
-}
+#main { grid-area: main; }
 
 .record {
 	border: solid white 1px;
@@ -75,22 +62,13 @@
 	padding-right: 1rem;
 }
 
-.recordHeader {
-	grid-area: header;
-}
-
-.recordLogo {
-	grid-area: logo;
-}
-
+.recordHeader { grid-area: header; }
+.recordLogo { grid-area: logo; }
 .recordRating {
 	grid-area: rating;
 	font-weight: 700;
 }
-
-.recordMenu {
-	grid-area: menu;
-}
+.recordMenu { grid-area: menu; }
 
 #addButton {
 	position: fixed;

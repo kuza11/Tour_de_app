@@ -1,15 +1,32 @@
 import Head from 'next/head';
-import React, { Component } from 'react';
 import styles from '../styles/Home.module.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowDownWideShort, faChevronDown, faEllipsis, faFilter, faHome, faMagnifyingGlass, faPlus, faTag, faTrophy } from '@fortawesome/free-solid-svg-icons';
 
-export function tmp() {
-	console.log("Hello");
+let clicks = 0;
+
+function addClick() {
+	clicks++;
 }
 
-export function openPopup() {
-	window.open('https://javascript.info/')
+let records = [{header: "Header1", logo: "Logo1", rating: "Rating1"}, {header: "Header2", logo: "Logo2", rating: "Rating2"}, {header: "Header3", logo: "Logo3", rating: "Rating3"}];
+
+function RecordDivs() {
+	for (let i = 0; i < clicks; i++) {
+	}
+
+	return (
+		<main>
+      {records.map((e, index) => (
+        <div key={index} className={styles.record}>
+          <h2 className={styles.recordHeader}>{e.header}</h2>
+					<div className={styles.recordLogo}>{e.logo}</div>
+					<p className={styles.recordRating}>{e.rating}</p>
+					<FontAwesomeIcon icon={faEllipsis} className={styles.recordMenu} />
+        </div>
+      ))}
+		</main>
+  );
 }
 
 export default function Home() {
@@ -65,23 +82,18 @@ export default function Home() {
 
 				</div>
 
-				<main id={styles.main}>
-
-					<div className={styles.record}>
-						<h2 className={styles.recordHeader} >Test header</h2>
-						<div className={styles.recordLogo} >Logo</div>
-						<p className={styles.recordRating} >8/10</p>
-						<FontAwesomeIcon icon={faEllipsis} className={styles.recordMenu} />
-					</div>
+				<main id={styles.main} >
 
 
+					<RecordDivs/>
 
-					<div id={styles.addButton}><FontAwesomeIcon icon={faPlus} height={"4rem"} /></div>
+
 				</main>
+
+				<div id={styles.addButton} onClick={addClick} ><FontAwesomeIcon icon={faPlus} height={"4rem"} /></div>
+
 			</div>
 
 		</>
   );
 }
-
-

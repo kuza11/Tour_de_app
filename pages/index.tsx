@@ -2,6 +2,8 @@ import Head from 'next/head';
 import styles from '../styles/Home.module.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowDownWideShort, faChevronDown, faEllipsis, faFilter, faHome, faMagnifyingGlass, faPlus, faTag, faTrophy } from '@fortawesome/free-solid-svg-icons';
+import { useState } from 'react';
+import Modal from '../components/modal';
 
 let clicks = 0;
 
@@ -30,6 +32,8 @@ function RecordDivs() {
 }
 
 export default function Home() {
+	const [modalOpen, setModalOpen] = useState(false);
+
 	return (
 		<>
 
@@ -84,13 +88,13 @@ export default function Home() {
 
 				<main id={styles.main} >
 
-
 					<RecordDivs/>
 
+					<Modal isOpen={modalOpen}/>
 
 				</main>
 
-				<div id={styles.addButton} onClick={addClick} ><FontAwesomeIcon icon={faPlus} height={"4rem"} /></div>
+				<div id={styles.addButton} onClick={() => setModalOpen(true)} ><FontAwesomeIcon icon={faPlus} height={"4rem"} /></div>
 
 			</div>
 

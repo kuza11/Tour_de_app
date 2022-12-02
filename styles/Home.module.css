@@ -1,6 +1,6 @@
 #body {
 	display: grid;
-	grid-template-columns: 20rem calc(100vw - 20rem);
+	grid-template-columns: 15rem calc(100vw - 15rem);
 	grid-template-rows: 3rem calc(100vh - 3rem);
 	grid-template-areas:
 	'leftBar topBar'
@@ -9,8 +9,8 @@
 
 #topBar {
 	grid-area: topBar;
-	display: grid;
-	grid-template-columns: [search]10rem auto [filter]max-content [sort]max-content;
+	display: flex;
+	justify-content: space-between;
 	padding: 0 1rem;
 	column-gap: 1.5rem;
 }
@@ -22,33 +22,11 @@
 	gap: 0.5rem;
 }
 
-.search { grid-area: search; }
-.filter { grid-area: filter; }
-.sort { grid-area: sort; }
-
 #leftBar {
 	grid-area: leftBar;
-}
-
-#leftBarLogo {
-	height: 3rem;
-	margin: 0;
-}
-
-.leftBarItem {
-	display: flex;
-	align-items: center;
-	gap: 0.5rem;
-	padding-left: 1rem;
-}
-
-.spacer {
-	height: 1px;
-	background-color: white;
-}
-
-#tags li {
-	list-style-type: none;
+	height: 100vh;
+	display: grid;
+	grid-template-rows: 3rem 4rem 4rem 2px 4rem auto 4rem;
 }
 
 #main { grid-area: main; }
@@ -56,19 +34,15 @@
 .record {
 	border: solid white 1px;
 	display: grid;
-	grid-template-columns: [header]auto [logo]4rem [rating]5rem [menu]3.5rem;
+	grid-template-columns: [header]auto [rating]5rem [logo]4rem;
 	margin: 2rem;
 	padding-left: 1rem;
 	padding-right: 1rem;
 }
 
-.recordHeader { grid-area: header; }
-.recordLogo { grid-area: logo; }
-.recordRating {
-	grid-area: rating;
-	font-weight: 700;
+.record:hover {
+	cursor: pointer;
 }
-.recordMenu { grid-area: menu; }
 
 #addButton {
 	position: fixed;
@@ -82,4 +56,23 @@
 	justify-content: center;
 	align-items: center;
 	border-radius: 15px;
+}
+
+.modal {
+	border-radius: 20px;
+	width: 50rem;
+	height: 50rem;
+	background-color: black;
+	position: absolute;
+	top: calc(50% - 27rem);
+	left: calc(50% - 27rem);
+	padding: 2rem;
+}
+
+.closeButton {
+	position: absolute;
+	top: 2rem;
+	right: 2rem;
+	width: 2rem;
+	height: 2rem;
 }

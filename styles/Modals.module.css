@@ -1,0 +1,93 @@
+.modal {
+	border-radius: 20px;
+	width: 50rem;
+	height: 25rem;
+	background-color: black;
+	position: absolute;
+	top: calc(50% - 21rem);
+	left: calc(50% - 25rem);
+	padding: 2rem;
+	text-align: center;
+}
+
+.form {
+	display: grid;
+	padding: 1rem;
+	grid-template-rows: 7rem 5rem 5rem 5rem;
+}
+
+.inputField {
+	display: flex;
+	flex-direction: column;
+}
+
+.input {
+	height: 2rem;
+	border-radius: 10px;
+	margin: 0 5rem;
+}
+
+.link {
+	text-decoration: underline;
+}
+
+.login {
+	width: 10rem;
+}
+
+.confirmation {
+	padding-top: 1rem;
+	font-size: 0.7rem;
+}
+
+
+
+
+.buttons {
+	position: absolute;
+	top: 2rem;
+	right: 2rem;
+	width: 5rem;
+	height: 2rem;
+	display: flex;
+	justify-content: space-between;
+}
+
+.header {
+	text-align: center;
+}
+
+.header > h2 {
+	font-size: 2.5rem;
+}
+
+.header > h3 {
+	font-size: 1.25rem;
+}
+
+.body {
+}
+
+.time {
+	text-align: center;
+	padding: 1rem;
+	font-size: 1.5rem;
+}
+
+.progressBar {
+	height: 1.5rem;
+	border: white 1px solid;
+	border-radius: 20px;
+}
+
+.progressBarFiller {
+	border-radius: 20px;
+	height: 100%;
+	width: 20%;
+	background-color: white;
+	color: black;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+

@@ -1,4 +1,5 @@
 #body {
+	position: fixed;
 	display: grid;
 	grid-template-columns: 15rem calc(100vw - 15rem);
 	grid-template-rows: 3rem calc(100vh - 3rem);
@@ -29,19 +30,9 @@
 	grid-template-rows: 3rem 4rem 4rem 2px 4rem auto 4rem;
 }
 
-#main { grid-area: main; }
-
-.record {
-	border: solid white 1px;
-	display: grid;
-	grid-template-columns: [header]auto [rating]5rem [logo]4rem;
-	margin: 2rem;
-	padding-left: 1rem;
-	padding-right: 1rem;
-}
-
-.record:hover {
-	cursor: pointer;
+#main {
+	grid-area: main;
+	overflow: scroll;
 }
 
 #addButton {
@@ -58,21 +49,3 @@
 	border-radius: 15px;
 }
 
-.modal {
-	border-radius: 20px;
-	width: 50rem;
-	height: 50rem;
-	background-color: black;
-	position: absolute;
-	top: calc(50% - 27rem);
-	left: calc(50% - 27rem);
-	padding: 2rem;
-}
-
-.closeButton {
-	position: absolute;
-	top: 2rem;
-	right: 2rem;
-	width: 2rem;
-	height: 2rem;
-}

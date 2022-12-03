@@ -8,3 +8,8 @@ body {
 	color: white;
 	background-color: black;
 }
+
+button {
+	background: transparent;
+	border: 0;
+}

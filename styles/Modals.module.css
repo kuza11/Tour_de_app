@@ -1,4 +1,41 @@
-.modal {
+.closeButton {
+	position: absolute;
+	top: 2rem;
+	right: 2rem;
+	width: 1.5rem;
+}
+
+.addRecordModal {
+	border-radius: 20px;
+	width: 50rem;
+	height: 50rem;
+	background-color: black;
+	position: absolute;
+	top: calc(50% - 27rem);
+	left: calc(50% - 27rem);
+	padding: 2rem;
+	text-align: center;
+}
+
+.addForm {
+	display: grid;
+	gap: 1rem;
+	grid-template-rows: 7rem 5rem 5rem 15rem 5rem 5rem;
+}
+
+.buttons {
+	position: absolute;
+	top: 2rem;
+	right: 2rem;
+	width: 5rem;
+	display: flex;
+	justify-content: space-between;
+}
+
+
+
+
+.loginModal {
 	border-radius: 20px;
 	width: 50rem;
 	height: 25rem;
@@ -10,7 +47,7 @@
 	text-align: center;
 }
 
-.form {
+.loginForm {
 	display: grid;
 	padding: 1rem;
 	grid-template-rows: 7rem 5rem 5rem 5rem;
@@ -43,14 +80,18 @@
 
 
 
-.buttons {
+.recordModal {
+	border-radius: 20px;
+	width: 50rem;
+	height: 50rem;
+	background-color: black;
 	position: absolute;
-	top: 2rem;
-	right: 2rem;
-	width: 5rem;
-	height: 2rem;
-	display: flex;
-	justify-content: space-between;
+	top: calc(50% - 27rem);
+	left: calc(50% - 27rem);
+	padding: 2rem;
+
+	display: grid;
+	grid-template-rows: 10rem auto 5rem 1.5rem;
 }
 
 .header {

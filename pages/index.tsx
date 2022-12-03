@@ -15,7 +15,7 @@ function Tags() {
 	return (
 		<>
 			{tags.map((e, index) => (
-				<li key={index} className={LeftBar.tag} >{e}</li>
+				<li className={LeftBar.tag} key={index} ><button>{e}</button></li>
 			))}
 		</>
 	);
@@ -23,6 +23,7 @@ function Tags() {
 
 let author = {logo: "Logo"};
 let records = [{header: "Header1", language: "Rust", time: 2.18, progress: "8", author: author}, { language: "C", time: 1.8, progress: "9", author: author}, {language: "C++", time: 3.75, progress: "5", author: author}];
+let pressed = -1;
 
 function RecordDivs() {
 	const [modalOpen, setModalOpen] = useState(-1);
@@ -30,19 +31,14 @@ function RecordDivs() {
 	return (
 		<>
       {records.map((e, index) => (
-        <div key={index} className={styles.record} onClick={() => setModalOpen(index)} >
-          <h2 className={Record.header}>{e.language} - {e.time}h</h2>
-					<div className={Record.logo}>{e.author.logo}</div>
-					<p className={Record.rating}>{e.progress}/10</p>
-        </div>
+        <button key={index} className={Record.record} onClick={() => setModalOpen(index)} >
+          <h2>{e.language} - {e.time}h</h2>
+					<h3>{e.progress}/10</h3>
+					<div>{e.author.logo}</div>
+        </button>
       ))}
 
-			<ReactModal isOpen={modalOpen >= 0} className={Record.modal} >
-
-				<div className={Modals.buttons} >
-					<FontAwesomeIcon icon={faEllipsis} />
-					<FontAwesomeIcon icon={faX} onClick={() => setModalOpen(-1)}/>
-				</div>
+			<ReactModal isOpen={modalOpen >= 0} className={Modals.recordModal} >
 
 				<div className={Modals.header} >
 					<h2>{records[modalOpen]?.header}</h2>
@@ -57,6 +53,23 @@ function RecordDivs() {
 
 				<div className={Modals.progressBar} >
 					<div className={Modals.progressBarFiller} >20%</div>
+				</div>
+
+				<div className={Modals.buttons} >
+					<button onClick={() => pressed = modalOpen} >
+						<FontAwesomeIcon icon={faEllipsis} height={"2rem"} />
+						{(pressed == modalOpen) &&
+							<div id={modalOpen.toString()} className={Modals.menu} style={{"display": "initial"}} >
+								<span>Edit</span>
+								<br/>
+								<span>Delete</span>
+							</div>
+						}
+					</button>
+
+					<button onClick={() => setModalOpen(-1)} >
+						<FontAwesomeIcon icon={faX} height={"1.8rem"} />
+					</button>
 				</div>
 
 			</ReactModal>
@@ -107,17 +120,19 @@ export default function Home() {
 					<div className={LeftBar.Items} >
 						<FontAwesomeIcon icon={faTag} height={"2rem"} />
 						<h2>Tags</h2>
-						<FontAwesomeIcon icon={faPlus} height={"2rem"} />
+						<button>
+							<FontAwesomeIcon icon={faPlus} height={"2rem"} />
+						</button>
 					</div>
 
 					<ul>
 						<Tags/>
 					</ul>
 
-					<div className={LeftBar.Items} onClick={() => setLoginOpen(true)} >
+					<button className={LeftBar.Items} onClick={() => setLoginOpen(true)} >
 						<FontAwesomeIcon icon={faUser} height={"2rem"} />
-						<h3>Sign in</h3>
-					</div>
+						<h2>Sign in</h2>
+					</button>
 
 				</div>
 
@@ -127,28 +142,44 @@ export default function Home() {
 
 				</main>
 
-				<div id={styles.addButton} onClick={() => setAddOpen(true)} ><FontAwesomeIcon icon={faPlus} height={"4rem"} /></div>
+				<button id={styles.addButton} onClick={() => setAddOpen(true)} ><FontAwesomeIcon icon={faPlus} height={"4rem"} /></button>
 
 			</div>
 
-			<ReactModal isOpen={addOpen} className={styles.modal} >
-				<form action='/api/form' method="post" className={styles.form} >
-					<label htmlFor='Header'>Header</label>
-					<input id="header" name="header" required />
+			<ReactModal isOpen={addOpen} className={Modals.addRecordModal} >
+				<form action='/api/form' method="post" className={Modals.addForm} >
+					<h2>Add new record</h2>
 
-					<label htmlFor="description">Description</label>
-					<input id="description" name="description" required />
+					<div>
+						<input placeholder="Header" id="header" name="header" required />
 
-					<label htmlFor="rating" >Rate</label>
-					<input type="range" min="0" max="10" id="rating" name="rating" required className={styles.nm} />
+						<input placeholder="Language" id="language" name="language" required />
+					</div>
+
+					<div>
+						<input placeholder="Time" type="number" min="0" max="59" id="time" name="time" required />
+						
+						<input type="date" id="date" name="date" required />
+					</div>
+
+					<textarea placeholder="Description" id="description" name="description" required />
+
+					<div>
+						<label htmlFor='Rating' >Rate yourself:</label>
+						<input type="range" min="0" max="10" id="rating" name="rating" required />
+					</div>
 
 					<button type="submit">Submit</button>
-					<button	onClick={() => setAddOpen(false)} className={styles.closeButton} >X</button>
+
+					<button onClick={() => setAddOpen(false)} className={Modals.closeButton} >
+						<FontAwesomeIcon icon={faClose} />
+					</button>
+
 				</form>
 			</ReactModal>
 
-			<ReactModal isOpen={loginOpen} className={Modals.modal} >
-				<form action='.......' className={Modals.form} >
+			<ReactModal isOpen={loginOpen} className={Modals.loginModal} >
+				<form action='.......' className={Modals.loginForm} >
 					<h2>Online Deník</h2>
 
 					<div className={Modals.inputField} >
@@ -163,16 +194,18 @@ export default function Home() {
 
 					<div className={Modals.confirmation} >
 						<button type="submit" className={Modals.login} >Create account</button>
-						<p>Don't have an account yet?</p>
-						<p className={Modals.link} onClick={() => {setRegisterOpen(true); setLoginOpen(false)}}>Register now!</p>
+						<p>Don't have an account yet? <button className={Modals.link} onClick={() => {setRegisterOpen(true); setLoginOpen(false)}}>Register now!</button></p>
 					</div>
 
-					<FontAwesomeIcon icon={faClose} onClick={() => setLoginOpen(false)} className={styles.closeButton} />
+					<button onClick={() => setLoginOpen(false)} className={Modals.closeButton} >
+						<FontAwesomeIcon icon={faClose} />
+					</button>
+
 				</form>
 			</ReactModal>
 
-			<ReactModal isOpen={registerOpen} className={Modals.modal} >
-				<form action='.......' className={Modals.form} >
+			<ReactModal isOpen={registerOpen} className={Modals.loginModal} >
+				<form action='.......' className={Modals.loginForm} >
 					<h2>Online Deník</h2>
 
 					<div className={Modals.inputField} >
@@ -187,12 +220,13 @@ export default function Home() {
 
 					<div className={Modals.confirmation} >
 						<button type="submit" className={Modals.login} >Log in</button>
-						<p>Already have an account?</p>
-						<p className={Modals.link} onClick={() => {setRegisterOpen(false); setLoginOpen(true)}}>Log in!</p>
+						<p>Already have an account? <button className={Modals.link} onClick={() => {setRegisterOpen(false); setLoginOpen(true)}}>Log in!</button></p>
 					</div>
 
 
-					<FontAwesomeIcon icon={faClose} onClick={() => setRegisterOpen(false)} className={styles.closeButton} />
+					<button onClick={() => setRegisterOpen(false)} className={Modals.closeButton} >
+						<FontAwesomeIcon icon={faClose} />
+					</button>
 
 				</form>
 			</ReactModal>

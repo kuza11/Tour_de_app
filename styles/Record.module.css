@@ -1,11 +1,12 @@
 .record {
 	border: solid white 1px;
 	display: grid;
-	grid-template-columns: auto 5rem 4rem;
+	grid-template-columns: auto 4rem min-content 2rem 2rem;
 	margin: 2rem;
 	width: calc(100% - 4rem);
-	height: 4.5rem;
+	height: 4rem;
 	padding: 0 1rem;
+	gap: 1rem;
 }
 
 .record:hover {

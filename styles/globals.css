@@ -10,6 +10,19 @@ body {
 }
 
 button {
-	background: transparent;
+	background: none;
 	border: 0;
+}
+
+input:focus {
+	outline:none;
+}
+
+textarea {
+	resize: none;
+	background: none;
+	border: solid 1px;
+	outline: none;
+	margin: 0 2rem;
+	font-size: 1.2rem;
 }

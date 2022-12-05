@@ -1,0 +1,11 @@
+.sort {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	flex-direction: column;
+	position: absolute;
+	top: 2rem;
+	right: 1rem;
+	background-color: white;
+	color: black;
+}

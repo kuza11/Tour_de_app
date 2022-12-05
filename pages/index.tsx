@@ -2,12 +2,13 @@ import Head from 'next/head';
 import Link from 'next/link';
 import styles from '../styles/Home.module.css';
 import LeftBar from '../styles/LeftBar.module.css';
+import TopBar from '../styles/TopBar.module.css';
 import Record from '../styles/Record.module.css';
 import Modals from '../styles/Modals.module.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faArrowDownWideShort, faClose, faEllipsis, faHome, faMagnifyingGlass, faPen, faPencil, faPlus, faTag, faTrash, faTrophy, faUser, faX } from '@fortawesome/free-solid-svg-icons';
+import { faArrowDownWideShort, faClose, faHome, faMagnifyingGlass, faPencil, faPlus, faTag, faTrash, faTrophy, faUser, faX } from '@fortawesome/free-solid-svg-icons';
 import React, { useState } from 'react';
-import ReactModal from 'react-modal';
+import { Menu, Dialog } from '@headlessui/react';
 
 let tags = ["tag1", "tag2", "tag3"];
 
@@ -44,28 +45,30 @@ function RecordDivs() {
         </button>
       ))}
 
-			<ReactModal isOpen={modalOpen >= 0} className={Modals.recordModal} >
+			<Dialog open={modalOpen >= 0} onClose={() => setModalOpen(-1)} >
+				<Dialog.Panel className={Modals.recordModal} >
 
-				<div className={Modals.header} >
-					<h2>{records[modalOpen]?.header}</h2>
-					<h3>{records[modalOpen]?.language}</h3>
-				</div>
+					<div className={Modals.header} >
+						<h2>{records[modalOpen]?.header}</h2>
+						<h3>{records[modalOpen]?.language}</h3>
+					</div>
 
-				<div className={Modals.body} >
-					<h4>{records[modalOpen]?.description}</h4>
-				</div>
+					<div className={Modals.body} >
+						<h4>{records[modalOpen]?.description}</h4>
+					</div>
 
-				<p className={Modals.time} >{records[modalOpen]?.time} min</p>
+					<p className={Modals.time} >{records[modalOpen]?.time} min</p>
 
-				<div className={Modals.progressBar} >
-					<div className={Modals.progressBarFiller} >{records[modalOpen]?.rating}</div>
-				</div>
+					<div className={Modals.progressBar} >
+						<div className={Modals.progressBarFiller} >{records[modalOpen]?.rating}</div>
+					</div>
 
-				<button className={Modals.closeButton} onClick={() => setModalOpen(-1)} >
-					<FontAwesomeIcon icon={faX} height={"1.8rem"} />
-				</button>
+					<button className={Modals.closeButton} onClick={() => setModalOpen(-1)} >
+						<FontAwesomeIcon icon={faX} height={"1.8rem"} />
+					</button>
 
-			</ReactModal>
+				</Dialog.Panel>
+			</Dialog>
 		</>
   );
 }
@@ -91,7 +94,38 @@ export default function Home() {
 					
 					<div>
 						<FontAwesomeIcon icon={faArrowDownWideShort} height={"2rem"} />
-						<p>Sort</p>
+
+						<Menu>
+							<Menu.Button>Sort</Menu.Button>
+
+							<Menu.Items className={TopBar.sort} >
+								<Menu.Item>
+									{() => (
+										<a>
+											Account settings
+										</a>
+									)}
+								</Menu.Item>
+
+								<Menu.Item>
+									{() => (
+										<a>
+											Account settings
+										</a>
+									)}
+								</Menu.Item>
+
+								<Menu.Item>
+									{() => (
+										<a>
+											Account settings
+										</a>
+									)}
+								</Menu.Item>
+
+							</Menu.Items>
+						</Menu>
+
 					</div>
 				</nav>
 
@@ -139,79 +173,84 @@ export default function Home() {
 
 			</div>
 
-			<ReactModal isOpen={addOpen} className={Modals.addRecordModal} >
-				<form action='Send to Jakub' method="post" className={Modals.addForm} >
-					<h2>Add new record</h2>
+			<Dialog open={addOpen} onClose={() => setAddOpen(false)} >
+				<Dialog.Panel className={Modals.addRecordModal} >
+					<form action='Send to Jakub' method="post" className={Modals.addForm} >
+						<h2>Add new record</h2>
 
-					<div className={Modals.inputFields} >
-						<input placeholder="Header" name="header" className={Modals.addInput} required />
+						<div className={Modals.inputFields} >
+							<input placeholder="Header" name="header" className={Modals.addInput} required />
 
-						<input placeholder="Language" name="language" className={Modals.addInput} required />
-					</div>
+							<input placeholder="Language" name="language" className={Modals.addInput} required />
+						</div>
 
-					<div className={Modals.inputFields} >
-						<input placeholder="Time (minutes)" type="number" min="1" name="time" className={Modals.addInput} required />
-						
-						<input type="date" name="date" className={Modals.addInput} required />
-					</div>
+						<div className={Modals.inputFields} >
+							<input placeholder="Time (minutes)" type="number" min="1" name="time" className={Modals.addInput} required />
 
-					<textarea placeholder="Description" name="description" />
+							<input type="date" name="date" className={Modals.addInput} required />
+						</div>
 
-					<div>
-						<label htmlFor='Rating' >Rate yourself:</label>
-						<br/>
-						<input type="range" min="0" max="10" name="rating" required />
-					</div>
+						<textarea placeholder="Description" name="description" />
 
-					<button type="submit" className={Modals.submit} >Submit</button>
+						<div>
+							<label htmlFor='Rating' >Rate yourself:</label>
+							<br/>
+							<input type="range" min="0" max="10" name="rating" required />
+						</div>
 
-					<button onClick={() => setAddOpen(false)} className={Modals.closeButton} >
-						<FontAwesomeIcon icon={faClose} />
-					</button>
+						<button type="submit" className={Modals.submit} >Submit</button>
 
-				</form>
-			</ReactModal>
+						<button onClick={() => setAddOpen(false)} className={Modals.closeButton} >
+							<FontAwesomeIcon icon={faClose} />
+						</button>
 
-			<ReactModal isOpen={loginOpen} className={Modals.loginModal} >
-				<form action='.......' className={Modals.loginForm} >
-					<h2>Online Deník</h2>
+					</form>
+				</Dialog.Panel>
+			</Dialog>
 
-					<input placeholder='Username' className={Modals.input} name="username" required />
+			<Dialog open={loginOpen} onClose={() => setLoginOpen(false)} >
+				<Dialog.Panel className={Modals.loginModal} >
+					<form action='.......' className={Modals.loginForm} >
+						<h2>Online Deník</h2>
 
-					<input placeholder='Password' className={Modals.input} name="password" type={'password'} required />
+						<input placeholder='Username' className={Modals.input} name="username" required />
 
-					<div className={Modals.confirmation} >
-						<button type="submit" className={Modals.submit} >Create account</button>
-						<p>Don't have an account yet? <button className={Modals.link} onClick={() => {setRegisterOpen(true); setLoginOpen(false)}}>Register now!</button></p>
-					</div>
+						<input placeholder='Password' className={Modals.input} name="password" type={'password'} required />
 
-					<button onClick={() => setLoginOpen(false)} className={Modals.closeButton} >
-						<FontAwesomeIcon icon={faClose} />
-					</button>
+						<div className={Modals.confirmation} >
+							<button type="submit" className={Modals.submit} >Create account</button>
+							<p>Don't have an account yet? <button className={Modals.link} onClick={() => {setRegisterOpen(true); setLoginOpen(false)}}>Register now!</button></p>
+						</div>
 
-				</form>
-			</ReactModal>
+						<button onClick={() => setLoginOpen(false)} className={Modals.closeButton} >
+							<FontAwesomeIcon icon={faClose} />
+						</button>
 
-			<ReactModal isOpen={registerOpen} className={Modals.loginModal} >
-				<form action='.......' className={Modals.loginForm} >
-					<h2>Online Deník</h2>
+					</form>
+				</Dialog.Panel>
+			</Dialog>
 
-					<input placeholder='Username' className={Modals.input} name="username" required />
+			<Dialog open={registerOpen} onClose={() => setRegisterOpen(false)} >
+				<Dialog.Panel className={Modals.loginModal} >
+					<form action='.......' className={Modals.loginForm} >
+						<h2>Online Deník</h2>
 
-					<input placeholder='Password' className={Modals.input} name="password" type={'password'} required />
+						<input placeholder='Username' className={Modals.input} name="username" required />
 
-					<div className={Modals.confirmation} >
-						<button type="submit" className={Modals.submit} >Log in</button>
-						<p>Already have an account? <button className={Modals.link} onClick={() => {setRegisterOpen(false); setLoginOpen(true)}}>Log in!</button></p>
-					</div>
+						<input placeholder='Password' className={Modals.input} name="password" type={'password'} required />
 
+						<div className={Modals.confirmation} >
+							<button type="submit" className={Modals.submit} >Log in</button>
+							<p>Already have an account? <button className={Modals.link} onClick={() => {setRegisterOpen(false); setLoginOpen(true)}}>Log in!</button></p>
+						</div>
 
-					<button onClick={() => setRegisterOpen(false)} className={Modals.closeButton} >
-						<FontAwesomeIcon icon={faClose} />
-					</button>
+						<button onClick={() => setRegisterOpen(false)} className={Modals.closeButton} >
+							<FontAwesomeIcon icon={faClose} />
+						</button>
 
-				</form>
-			</ReactModal>
+					</form>
+				</Dialog.Panel>
+			</Dialog>
 
 		</>
   );

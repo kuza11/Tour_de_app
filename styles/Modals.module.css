@@ -17,6 +17,7 @@
 
 
 .addRecordModal {
+	border: white 2px solid;
 	border-radius: 20px;
 	width: 50rem;
 	height: 50rem;
@@ -60,6 +61,7 @@
 
 
 .loginModal {
+	border: 2px white solid;
 	border-radius: 20px;
 	width: 50rem;
 	height: 25rem;
@@ -96,6 +98,7 @@
 
 
 .recordModal {
+	border: 2px white solid;
 	border-radius: 20px;
 	width: 50rem;
 	height: 50rem;

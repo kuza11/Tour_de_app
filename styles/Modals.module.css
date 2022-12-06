@@ -41,6 +41,21 @@
 	font-size: 1.2rem;
 }
 
+.addInputM {
+	width: 12rem;
+	height: 2rem;
+	font-size: 1.2rem;
+	border-bottom: solid white 3px;
+}
+
+input.addInput {
+	justify-self: center;
+	align-self: center;
+	background: transparent;
+	border: none;
+	border-bottom: solid;
+}
+
 .addRecordModal div > input {
 	background: transparent;
 	border: none;
@@ -55,6 +70,12 @@
 	display: grid;
 	gap: 1rem;
 	grid-template-rows: 7rem 5rem 5rem 15rem 5rem min-content auto;
+}
+
+.tags {
+	position: absolute;
+	top: 1rem;
+
 }
 
 

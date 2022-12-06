@@ -2,11 +2,10 @@ import Head from 'next/head';
 import Link from 'next/link';
 import styles from '../styles/Home.module.css';
 import LeftBar from '../styles/LeftBar.module.css';
-import TopBar from '../styles/TopBar.module.css';
 import Record from '../styles/Record.module.css';
 import Modals from '../styles/Modals.module.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faArrowDownWideShort, faClose, faHome, faMagnifyingGlass, faPencil, faPlus, faTag, faTrash, faTrophy, faUser, faX } from '@fortawesome/free-solid-svg-icons';
+import { faArrowDownWideShort, faClose, faFilter, faHome, faPencil, faPlus, faTag, faTrash, faTrophy, faUser, faX } from '@fortawesome/free-solid-svg-icons';
 import React, { useState } from 'react';
 import { Menu, Dialog } from '@headlessui/react';
 
@@ -23,27 +22,73 @@ function Tags() {
 }
 
 let author = {logo: "Logo"};
-let records = [{header: "Header1", language: "Rust", time: 2.18, rating: "8", author: author}, { language: "C", time: 1.8, rating: "9", author: author}, {language: "C++", time: 3.75, rating: "5", author: author}];
-let hello = null;
+let records = [{ header: "Header1", language: "Rust", description: "Desc", time: 218, rating: "8", author: author, date: "2017-08-09" }, { header: "Header2", language: "C", description: "Desc", time: 18, rating: "9", author: author, date: "2017-08-09" }, { header: "Header3", language: "C++", description: "Desc", time: 375, rating: "5", author: author, date: "2017-08-09" }];
 
 function RecordDivs() {
 	const [modalOpen, setModalOpen] = useState(-1);
+	const [editOpen, setEditOpen] = useState(-1);
 
 	return (
 		<>
       {records.map((e, index) => (
-        <button key={index} className={Record.record} onClick={() => setModalOpen(index)} >
-          <h2>{e.language} - {e.time}h</h2>
-					<div>{e.author.logo}</div>
-					<h3>{e.rating}/10</h3>
-					<button onClick={() => hello = "Send To Jakub"} >
+        <div key={index} className={Record.record} >
+          <button onClick={() => setModalOpen(index)} className={Record.h2} >{e.language} - {e.time} min</button>
+					<button onClick={() => setModalOpen(index)} >{e.author.logo}</button>
+					<button onClick={() => setModalOpen(index)} className={Record.h3} >{e.rating}/10</button>
+					<button onClick={() => setEditOpen(index)} >
 						<FontAwesomeIcon icon={faPencil} height={"1.8rem"} />
 					</button>
-					<button onClick={() => hello = "Send To Jakub"} >
+					<button        >
 						<FontAwesomeIcon icon={faTrash} height={"1.8rem"} />
 					</button>
-        </button>
+        </div>
       ))}
+
+			<Dialog open={editOpen >= 0} onClose={() => setEditOpen(-1)} >
+				<Dialog.Panel className={Modals.addRecordModal} >
+					<form action='Send to Jakub' method="post" className={Modals.addForm} >
+						<input defaultValue={records[editOpen]?.header} name="header" className={Modals.addInput} required />
+
+						<div className={Modals.inputFields} >
+							<Menu>
+								<Menu.Button className={Modals.addInputM}>Tags</Menu.Button>
+								<Menu.Items className={Modals.tags} >
+								{tags.map((e, index) => (
+									<Menu.Item key={index}>
+										{() => (
+											<p>{e}</p>
+										)}
+									</Menu.Item>
+								))}
+								</Menu.Items>
+							</Menu>
+
+							<input defaultValue={records[editOpen]?.language} name="language" className={Modals.addInput} required />
+						</div>
+
+						<div className={Modals.inputFields} >
+							<input defaultValue={records[editOpen]?.time} type="number" min="1" name="time" className={Modals.addInput} required />
+
+							<input defaultValue={records[editOpen]?.date} type="date" name="date" className={Modals.addInput} required />
+						</div>
+
+						<textarea defaultValue={records[editOpen]?.description} name="description" />
+
+						<div>
+							<label htmlFor='Rating' >Rate yourself:</label>
+							<br/>
+							<input defaultValue={records[editOpen]?.rating} type="range" min="0" max="10" name="rating" required />
+						</div>
+
+						<button type="submit" className={Modals.submit} >Save edited</button>
+
+						<button onClick={() => setEditOpen(-1)} className={Modals.closeButton} >
+							<FontAwesomeIcon icon={faClose} />
+						</button>
+
+					</form>
+				</Dialog.Panel>
+			</Dialog>
 
 			<Dialog open={modalOpen >= 0} onClose={() => setModalOpen(-1)} >
 				<Dialog.Panel className={Modals.recordModal} >
@@ -86,48 +131,75 @@ export default function Home() {
 			</Head>
 
 			<div id={styles.body}>
-				<nav id={styles.topBar}>
-					<div>
-						<FontAwesomeIcon icon={faMagnifyingGlass} height={"2rem"} />
-						<input placeholder='Search' type="search" />
-					</div>
-					
-					<div>
-						<FontAwesomeIcon icon={faArrowDownWideShort} height={"2rem"} />
+				<div id={styles.topBar}>
 
-						<Menu>
-							<Menu.Button>Sort</Menu.Button>
+				<Menu>
+						<Menu.Button><FontAwesomeIcon icon={faFilter} height={"2rem"} />Filter</Menu.Button>
 
-							<Menu.Items className={TopBar.sort} >
+						<Menu.Items>
+							<div className={styles.sort} >
 								<Menu.Item>
-									{() => (
-										<a>
-											Account settings
-										</a>
+									{({active}) => (
+										<button className={`${active ? 'selected' : ''}`}>
+											Sort A-Z
+										</button>
+									)}
+								</Menu.Item>
+
+								<Menu.Item>
+									{({active}) => (
+										<button className={`${active ? 'selected' : ''}`}>
+											Sort Z-A
+										</button>
 									)}
 								</Menu.Item>
 
 								<Menu.Item>
 									{() => (
-										<a>
-											Account settings
-										</a>
+										<button>
+											Sort by date
+										</button>
+									)}
+								</Menu.Item>
+
+							</div>
+						</Menu.Items>
+					</Menu>
+
+					<Menu>
+						<Menu.Button  ><FontAwesomeIcon icon={faArrowDownWideShort} height={"2rem"} />Sort</Menu.Button>
+
+						<Menu.Items>
+							<div className={styles.sort} >
+								<Menu.Item>
+								{({active}) => (
+										<button className={`${active ? 'selected' : ''}`}>
+											Sort A-Z
+										</button>
+									)}
+								</Menu.Item>
+
+								<Menu.Item>
+								{({active}) => (
+										<button className={`${active ? 'selected' : ''}`}>
+											Sort Z-A
+										</button>
 									)}
 								</Menu.Item>
 
 								<Menu.Item>
 									{() => (
-										<a>
-											Account settings
-										</a>
+										<button>
+											Sort by date
+										</button>
 									)}
 								</Menu.Item>
 
-							</Menu.Items>
-						</Menu>
+							</div>
+						</Menu.Items>
+					</Menu>
 
-					</div>
-				</nav>
+				</div>
 
 				<div id={styles.leftBar}>
 					<div className={LeftBar.Items} >Logo</div>
@@ -176,8 +248,6 @@ export default function Home() {
 			<Dialog open={addOpen} onClose={() => setAddOpen(false)} >
 				<Dialog.Panel className={Modals.addRecordModal} >
 					<form action='Send to Jakub' method="post" className={Modals.addForm} >
-						<h2>Add new record</h2>
-
 						<div className={Modals.inputFields} >
 							<input placeholder="Header" name="header" className={Modals.addInput} required />
 
@@ -198,7 +268,7 @@ export default function Home() {
 							<input type="range" min="0" max="10" name="rating" required />
 						</div>
 
-						<button type="submit" className={Modals.submit} >Submit</button>
+						<button type="submit" className={Modals.submit} >Add</button>
 
 						<button onClick={() => setAddOpen(false)} className={Modals.closeButton} >
 							<FontAwesomeIcon icon={faClose} />
@@ -219,7 +289,7 @@ export default function Home() {
 
 						<div className={Modals.confirmation} >
 							<button type="submit" className={Modals.submit} >Create account</button>
-							<p>Don't have an account yet? <button className={Modals.link} onClick={() => {setRegisterOpen(true); setLoginOpen(false)}}>Register now!</button></p>
+							<p>Don&#39;t have an account yet? <button className={Modals.link} onClick={() => {setRegisterOpen(true); setLoginOpen(false)}}>Register now!</button></p>
 						</div>
 
 						<button onClick={() => setLoginOpen(false)} className={Modals.closeButton} >

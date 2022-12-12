@@ -23,8 +23,13 @@
 	gap: 0.5rem;
 }
 
-.fixed {
+.sortButt {
 	position: fixed;
+}
+
+.filterButt {
+	position: fixed;
+	margin-right: 5rem;
 }
 
 .sort {
@@ -47,13 +52,6 @@
 
 .selected {
 	background-color: blue;
-}
-
-#leftBar {
-	grid-area: leftBar;
-	height: 100vh;
-	display: grid;
-	grid-template-rows: 3rem 4rem 4rem 2px 4rem auto 4rem;
 }
 
 #main {

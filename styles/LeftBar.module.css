@@ -20,3 +20,15 @@
 	text-decoration: none;
 	color: white;
 }
+
+.hidden {
+	display: none;
+}
+
+#LeftBar {
+	grid-area: leftBar;
+	height: 100vh;
+	display: grid;
+	grid-template-rows: 3rem 4rem 4rem 2px 4rem auto 4rem;
+}
+

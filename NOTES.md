@@ -1,5 +1,3 @@
-Sign in button change to profile pic
-
 TAGY!!!!!
 TAGY!!!!!
 TAGY!!!!!

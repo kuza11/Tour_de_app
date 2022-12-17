@@ -25,11 +25,13 @@
 
 .sortButt {
 	position: fixed;
+	font-size: 1.1em;
 }
 
 .filterButt {
 	position: fixed;
-	margin-right: 5rem;
+	font-size: 1.1em;
+	margin-right: 5.5rem;
 }
 
 .sort {

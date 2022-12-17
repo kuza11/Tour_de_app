@@ -4,18 +4,56 @@ import styles from '../styles/Home.module.css';
 import LeftBar from '../styles/LeftBar.module.css';
 import Modals from '../styles/Modals.module.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faArrowDownWideShort, faClose, faFilter, faHome, faPencil, faPlus, faTag, faTrash, faTrophy, faUser, faX } from '@fortawesome/free-solid-svg-icons';
+import { faArrowDownWideShort, faClose, faFilter, faHome, faPlus, faTag, faTrophy, faUser } from '@fortawesome/free-solid-svg-icons';
 import React, { useState } from 'react';
 import { Menu, Dialog } from '@headlessui/react';
 import RecordDivs from '../components/record';
 
-let tags = [{id: 1, clicked: true, name: "Tag1"}, {id: 2, clicked: false, name: "Tag2"}, {id: 3, clicked: false, name: "Tag3"}];
+async function writeData() { const data = await fetch(`http://localhost:3000/api/persons`, {
+method: 'POST', // *GET, POST, PUT, DELETE, etc.
+headers: {
+'Content-Type': 'application/json'
+},
+body: JSON.stringify({username:"new", password:"984", title: "sdf", description: "sgfvds"}) // body data type must match "Content-Type" header
+});
+const message = await data.json();
+console.log(message)
+	}
+
+let tags = [
+	{id: 1, clicked: true, name: "Tag1"},
+	{id: 2, clicked: false, name: "Tag2"},
+	{id: 3, clicked: false, name: "Tag3"}
+];
 
 function Tags() {
+	const [tags, setTags] = useState ([
+		{id: 1, clicked: true, name: "Tag1"},
+		{id: 2, clicked: false, name: "Tag2"},
+		{id: 3, clicked: false, name: "Tag3"}
+	]);
+
+	function handleClick(id) {
+		const newTags = tags.map(tag => {
+			if (tag.id === id) {
+				return { ...tag, clicked: !tag.clicked };
+			} else {
+				return tag;
+			}
+		});
+		
+		setTags(newTags);
+	};
+
+
 	return (
 		<>
 			{tags.map((e, index) => (
-				<li className={LeftBar.tag} key={index} ><button onClick={() => e.clicked = !e.clicked} >{e.clicked?e.name:""}{e.clicked?"True":"False"}</button></li>
+				<li className={LeftBar.tag} key={index} >
+					<button onClick={() => handleClick(e.id)} >
+						{e.name}
+					</button>
+				</li>
 			))}
 		</>
 	);
@@ -113,11 +151,6 @@ export default function Home() {
 						<h2>Home</h2>
 					</Link>
 
-					<Link className={[LeftBar.Items, LeftBar.homeGoalLink].join(" ")} href="/goals" >
-						<FontAwesomeIcon icon={faTrophy} height={"2rem"} />
-						<h2>Goals</h2>
-					</Link>
-
 					<div id={LeftBar.Spacer} ></div>
 
 					<div className={LeftBar.Items} >
@@ -155,7 +188,7 @@ export default function Home() {
 
 			<Dialog open={addOpen} onClose={() => setAddOpen(true)} >
 				<Dialog.Panel className={Modals.addRecordModal} >
-					<form action='Send to Jakub' method="post" className={Modals.addForm} >
+					<form onSubmit={writeData} method="post" className={Modals.addForm} >
 						<input placeholder='Header' name="header" className={Modals.addInput} required />
 
 						<div className={Modals.inputFields} >

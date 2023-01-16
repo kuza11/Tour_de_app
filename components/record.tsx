@@ -24,15 +24,15 @@ export default function RecordDivs() {
 					<button onClick={() => setEditOpen(index)} >
 						<FontAwesomeIcon icon={faPencil} height={"1.8rem"} />
 					</button>
-					<button        >
+					<button>
 						<FontAwesomeIcon icon={faTrash} height={"1.8rem"} />
 					</button>
         </div>
       ))}
 
 			<Dialog open={editOpen >= 0} onClose={() => setEditOpen(-1)} >
-				<Dialog.Panel className={Modals.addRecordModal} >
-					<form action='Send to Jakub' method="post" className={Modals.addForm} >
+				<Dialog.Panel className={Modals.modal} >
+					<form action='Send to Jakub' method="POST" className={Modals.addForm} >
 						<input defaultValue={records[editOpen]?.header} name="header" className={Modals.addInput} required />
 
 						<div className={Modals.inputFields} >
@@ -77,7 +77,7 @@ export default function RecordDivs() {
 			</Dialog>
 
 			<Dialog open={modalOpen >= 0} onClose={() => setModalOpen(-1)} >
-				<Dialog.Panel className={Modals.recordModal} >
+				<Dialog.Panel className={Modals.modal} >
 
 					<div className={Modals.header} >
 						<h2>{records[modalOpen]?.header}</h2>

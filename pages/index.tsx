@@ -1,68 +1,19 @@
+import React, { useState } from 'react';
 import Head from 'next/head';
 import Link from 'next/link';
 import styles from '../styles/Home.module.css';
 import LeftBar from '../styles/LeftBar.module.css';
 import Modals from '../styles/Modals.module.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faArrowDownWideShort, faClose, faFilter, faHome, faPlus, faTag, faTrophy, faUser } from '@fortawesome/free-solid-svg-icons';
-import React, { useState } from 'react';
+import { faArrowDownWideShort, faClose, faFilter, faHome, faPlus, faTag, faUser } from '@fortawesome/free-solid-svg-icons';
 import { Menu, Dialog } from '@headlessui/react';
 import RecordDivs from '../components/record';
+import Tags from '../components/tags';
 
-async function writeData() { const data = await fetch(`http://localhost:3000/api/persons`, {
-method: 'POST', // *GET, POST, PUT, DELETE, etc.
-headers: {
-'Content-Type': 'application/json'
-},
-body: JSON.stringify({username:"new", password:"984", title: "sdf", description: "sgfvds"}) // body data type must match "Content-Type" header
-});
-const message = await data.json();
-console.log(message)
-	}
-
-let tags = [
-	{id: 1, clicked: true, name: "Tag1"},
-	{id: 2, clicked: false, name: "Tag2"},
-	{id: 3, clicked: false, name: "Tag3"}
-];
-
-function Tags() {
-	const [tags, setTags] = useState ([
-		{id: 1, clicked: true, name: "Tag1"},
-		{id: 2, clicked: false, name: "Tag2"},
-		{id: 3, clicked: false, name: "Tag3"}
-	]);
-
-	function handleClick(id) {
-		const newTags = tags.map(tag => {
-			if (tag.id === id) {
-				return { ...tag, clicked: !tag.clicked };
-			} else {
-				return tag;
-			}
-		});
-		
-		setTags(newTags);
-	};
-
-
-	return (
-		<>
-			{tags.map((e, index) => (
-				<li className={LeftBar.tag} key={index} >
-					<button onClick={() => handleClick(e.id)} >
-						{e.name}
-					</button>
-				</li>
-			))}
-		</>
-	);
-}
+let tags = [{id: 1, clicked: true, name: "Tag1"}, {id: 2, clicked: false, name: "Tag2"}, {id: 3, clicked: false, name: "Tag3"}];
 
 export default function Home() {
 	const [addOpen, setAddOpen] = useState(false);
-	const [loginOpen, setLoginOpen] = useState(false);
-	const [registerOpen, setRegisterOpen] = useState(false);
 	const [signedIn, setSignedIn] = useState(false);
 
 	return (
@@ -75,13 +26,15 @@ export default function Home() {
 			<div id={styles.body}>
 				<div id={styles.topBar}>
 
-				<Menu>
+				<div>Logo</div>
+
+					<Menu>
 						<Menu.Button className={styles.filterButt} ><FontAwesomeIcon icon={faFilter} height={"2rem"} />Filter</Menu.Button>
 
 						<Menu.Items>
 							<div className={styles.sort} >
 								<Menu.Item>
-									{({active}) => (
+								{({active}) => (
 										<button className={`${active ? 'selected' : ''}`}>
 											Filter
 										</button>
@@ -89,7 +42,7 @@ export default function Home() {
 								</Menu.Item>
 
 								<Menu.Item>
-									{({active}) => (
+								{({active}) => (
 										<button className={`${active ? 'selected' : ''}`}>
 											Filter
 										</button>
@@ -108,13 +61,13 @@ export default function Home() {
 						</Menu.Items>
 					</Menu>
 
-					<Menu>
+				<Menu>
 						<Menu.Button className={styles.sortButt} ><FontAwesomeIcon icon={faArrowDownWideShort} height={"2rem"} />Sort</Menu.Button>
 
 						<Menu.Items>
 							<div className={styles.sort} >
 								<Menu.Item>
-								{({active}) => (
+									{({active}) => (
 										<button className={`${active ? 'selected' : ''}`}>
 											Sort A-Z
 										</button>
@@ -122,7 +75,7 @@ export default function Home() {
 								</Menu.Item>
 
 								<Menu.Item>
-								{({active}) => (
+									{({active}) => (
 										<button className={`${active ? 'selected' : ''}`}>
 											Sort Z-A
 										</button>
@@ -144,8 +97,6 @@ export default function Home() {
 				</div>
 
 				<div id={LeftBar.LeftBar}>
-					<div className={LeftBar.Items} >Logo</div>
-
 					<Link className={[LeftBar.Items, LeftBar.homeGoalLink].join(" ")} href="/" >
 						<FontAwesomeIcon icon={faHome} height={"2rem"} />
 						<h2>Home</h2>
@@ -162,13 +113,13 @@ export default function Home() {
 					</div>
 
 					<ul>
-						<Tags/>
+						<Tags numberOfButtons={3} />
 					</ul>
 
-					<button className={signedIn?LeftBar.hidden:LeftBar.Items} onClick={() => setLoginOpen(true)} >
+					<Link href="/login" className={signedIn?LeftBar.hidden:LeftBar.Items} >
 						<FontAwesomeIcon icon={faUser} height={"2rem"} />
 						<h2>Sign in</h2>
-					</button>
+					</Link>
 
 					<div className={signedIn?LeftBar.Items:LeftBar.hidden} >
 
@@ -186,22 +137,22 @@ export default function Home() {
 
 			</div>
 
-			<Dialog open={addOpen} onClose={() => setAddOpen(true)} >
-				<Dialog.Panel className={Modals.addRecordModal} >
-					<form onSubmit={writeData} method="post" className={Modals.addForm} >
+			<Dialog open={addOpen} onClose={() => setAddOpen(false)} >
+				<Dialog.Panel className={[Modals.addRecordModal, Modals.modal].join(" ")} >
+					<form method="POST" className={Modals.addForm} >
 						<input placeholder='Header' name="header" className={Modals.addInput} required />
 
 						<div className={Modals.inputFields} >
 							<Menu>
 								<Menu.Button className={Modals.addInputM}>Tags</Menu.Button>
 								<Menu.Items className={Modals.tags} >
-								{tags.map((e, index) => (
-									<Menu.Item key={index}>
-										{() => (
+									{tags.map((e, index) => (
+										<Menu.Item key={index}>
+											{() => (
 											<p>{e.name}</p>
-										)}
-									</Menu.Item>
-								))}
+											)}
+										</Menu.Item>
+									))}
 								</Menu.Items>
 							</Menu>
 
@@ -232,50 +183,6 @@ export default function Home() {
 				</Dialog.Panel>
 			</Dialog>
 
-			<Dialog open={loginOpen} onClose={() => setLoginOpen(false)} >
-				<Dialog.Panel className={Modals.loginModal} >
-					<form action='.......' className={Modals.loginForm} >
-						<h2>Online Deník</h2>
-
-						<input placeholder='Username' className={Modals.input} name="username" required />
-
-						<input placeholder='Password' className={Modals.input} name="password" type={'password'} required />
-
-						<div className={Modals.confirmation} >
-							<button type="submit" className={Modals.submit} onClick={() => setSignedIn(true)} >Create account</button>
-							<p>Don&#39;t have an account yet? <button className={Modals.link} onClick={() => {setRegisterOpen(true); setLoginOpen(false)}}>Register now!</button></p>
-						</div>
-
-						<button onClick={() => setLoginOpen(false)} className={Modals.closeButton} >
-							<FontAwesomeIcon icon={faClose} />
-						</button>
-
-					</form>
-				</Dialog.Panel>
-			</Dialog>
-
-			<Dialog open={registerOpen} onClose={() => setRegisterOpen(false)} >
-				<Dialog.Panel className={Modals.loginModal} >
-					<form action='.......' className={Modals.loginForm} >
-						<h2>Online Deník</h2>
-
-						<input placeholder='Username' className={Modals.input} name="username" required />
-
-						<input placeholder='Password' className={Modals.input} name="password" type={'password'} required />
-
-						<div className={Modals.confirmation} >
-							<button type="submit" className={Modals.submit} onClick={() => setSignedIn(true)} >Log in</button>
-							<p>Already have an account? <button className={Modals.link} onClick={() => {setRegisterOpen(false); setLoginOpen(true)}}>Log in!</button></p>
-						</div>
-
-						<button onClick={() => setRegisterOpen(false)} className={Modals.closeButton} >
-							<FontAwesomeIcon icon={faClose} />
-						</button>
-
-					</form>
-				</Dialog.Panel>
-			</Dialog>
-
 		</>
-  );
+	);
 }

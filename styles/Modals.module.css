@@ -5,23 +5,15 @@
 	width: 1.5rem;
 }
 
-.submit {
-	border: 1px solid;
-	border-radius: 10px;
-	padding: 0.5rem;
-	width: 10rem;
-	justify-self: center;
-}
 
 
 
-
-.addRecordModal {
+.modal {
+	background-color: #262626;
 	border: white 2px solid;
 	border-radius: 20px;
 	width: 50rem;
 	height: 50rem;
-	background-color: black;
 	position: absolute;
 	top: calc(50% - 27rem);
 	left: calc(50% - 27rem);
@@ -81,53 +73,9 @@ input.addInput {
 
 
 
-.loginModal {
-	border: 2px white solid;
-	border-radius: 20px;
-	width: 50rem;
-	height: 25rem;
-	background-color: black;
-	position: absolute;
-	top: calc(50% - 21rem);
-	left: calc(50% - 25rem);
-	padding: 2rem;
-	text-align: center;
-}
-
-.loginForm {
-	display: grid;
-	padding: 1rem;
-	grid-template-rows: 7rem 5rem 5rem 5rem;
-}
-
-.input {
-	height: 2rem;
-	border-radius: 10px;
-	margin: 0 5rem;
-}
-
-.link {
-	text-decoration: underline;
-}
-
-.confirmation {
-	padding-top: 1rem;
-	font-size: 0.7rem;
-}
 
 
-
-
-.recordModal {
-	border: 2px white solid;
-	border-radius: 20px;
-	width: 50rem;
-	height: 50rem;
-	background-color: black;
-	position: absolute;
-	top: calc(50% - 27rem);
-	left: calc(50% - 27rem);
-	padding: 2rem;
+.addRecordModal {
 
 	display: grid;
 	grid-template-rows: 10rem auto 5rem 1.5rem;
@@ -143,9 +91,6 @@ input.addInput {
 
 .header > h3 {
 	font-size: 1.25rem;
-}
-
-.body {
 }
 
 .time {

@@ -28,7 +28,7 @@
 #LeftBar {
 	grid-area: leftBar;
 	display: grid;
-	grid-template-rows: 4rem 2px 4rem auto 4rem;
+	grid-template-rows: 3rem 4rem 2px 4rem auto 4rem;
 	background-color: #262626;
 }
 

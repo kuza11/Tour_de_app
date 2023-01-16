@@ -16,6 +16,8 @@ export default function RecordDivs() {
 
 	return (
 		<>
+			<div className={Record.spacer}></div>
+
       {records.map((e, index) => (
         <div key={index} className={Record.record} >
           <button onClick={() => setModalOpen(index)} className={Record.h2} >{e.language} - {e.time} min</button>

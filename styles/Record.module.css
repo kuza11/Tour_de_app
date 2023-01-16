@@ -36,3 +36,7 @@
 .visible {
 	display: initial;
 }
+
+.spacer {
+	height: 4rem;
+}

@@ -24,15 +24,12 @@ export default function Home() {
 			</Head>
 
 			<div id={styles.body}>
-				<div id={styles.topBar}>
-
-				<div>Logo</div>
 
 					<Menu>
-						<Menu.Button className={styles.filterButt} ><FontAwesomeIcon icon={faFilter} height={"2rem"} />Filter</Menu.Button>
+						<Menu.Button className={[styles.filterButt, styles.butt].join(" ")} ><FontAwesomeIcon icon={faFilter} height={"2rem"} />Filter</Menu.Button>
 
 						<Menu.Items>
-							<div className={styles.sort} >
+							<div className={[styles.filter, styles.popup].join(" ")} >
 								<Menu.Item>
 								{({active}) => (
 										<button className={`${active ? 'selected' : ''}`}>
@@ -62,10 +59,10 @@ export default function Home() {
 					</Menu>
 
 				<Menu>
-						<Menu.Button className={styles.sortButt} ><FontAwesomeIcon icon={faArrowDownWideShort} height={"2rem"} />Sort</Menu.Button>
+						<Menu.Button className={[styles.sortButt, styles.butt].join(" ")} ><FontAwesomeIcon icon={faArrowDownWideShort} height={"2rem"} />Sort</Menu.Button>
 
 						<Menu.Items>
-							<div className={styles.sort} >
+							<div className={[styles.sort, styles.popup].join(" ")} >
 								<Menu.Item>
 									{({active}) => (
 										<button className={`${active ? 'selected' : ''}`}>
@@ -94,9 +91,10 @@ export default function Home() {
 						</Menu.Items>
 					</Menu>
 
-				</div>
 
 				<div id={LeftBar.LeftBar}>
+					<div>Logo</div>
+
 					<Link className={[LeftBar.Items, LeftBar.homeGoalLink].join(" ")} href="/" >
 						<FontAwesomeIcon icon={faHome} height={"2rem"} />
 						<h2>Home</h2>

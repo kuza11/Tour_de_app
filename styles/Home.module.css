@@ -2,44 +2,36 @@
 	position: fixed;
 	display: grid;
 	grid-template-columns: 15rem calc(100vw - 15rem);
-	grid-template-rows: 3rem calc(100vh - 3rem);
-	grid-template-areas:
-	'topBar topBar'
-	'leftBar main';
+	grid-template-rows: 100vh;
+	grid-template-areas: 'leftBar main';
 }
 
-#topBar {
-	grid-area: topBar;
-	display: flex;
-	justify-content: flex-end;
-	padding: 0 1rem;
-	column-gap: 1.5rem;
-	background-color: #1a1a1a;
-}
-
-#topBar > * {
+.butt {
 	display: flex;
 	align-items: center;
 	height: 3rem;
 	gap: 0.5rem;
+	position: absolute;
+	font-size: 1.1em;
+	top: 1rem;
+	border: 2px white solid;
+	border-radius: 10px;
+	background-color: #696969;
+	color: black;
 }
 
 .sortButt {
-	position: fixed;
-	font-size: 1.1em;
+	right: 1rem;
 }
 
 .filterButt {
-	font-size: 1.1em;
-	margin-right: 5.5rem;
+	right: 7rem;
 }
 
-.sort {
+.popup {
 	display: flex;
 	flex-direction: column;
 	position: fixed;
-	top: 3rem;
-	right: 1rem;
 	background-color: white;
 	color: black;
 	padding: 1rem;
@@ -47,7 +39,17 @@
 	gap: 1rem;
 }
 
-.sort > button {
+.sort {
+	top: 3rem;
+	right: 1rem;
+}
+
+.filter {
+	top: 3rem;
+	right: 6rem;
+}
+
+.popup > button {
 	color: black;
 	font-size: 1em;
 }
@@ -63,16 +65,17 @@
 }
 
 #addButton {
-	position: fixed;
+	position: absolute;
 	bottom: 2rem;
 	right: 2rem;
 	height: 4rem;
 	width: 4rem;
-	background-color: white;
+	background-color: #696969;
 	color: black;
 	display: flex;
 	justify-content: center;
 	align-items: center;
+	border: solid 2px white;
 	border-radius: 15px;
 }
 

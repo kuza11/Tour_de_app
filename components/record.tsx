@@ -1,71 +1,88 @@
 import Record from '../styles/Record.module.css';
 import Modals from '../styles/Modals.module.css';
-import { Menu, Dialog } from '@headlessui/react';
+import { Dialog } from '@headlessui/react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPencil, faTrash, faX, faClose } from '@fortawesome/free-solid-svg-icons';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import { ChooseTagsPopup } from './tags';
 
-let tags = [{id: 1, clicked: true, name: "Tag1"}, {id: 2, clicked: false, name: "Tag2"}, {id: 3, clicked: false, name: "Tag3"}];
-
-let authors = {logo: "Logo"};
-let records = [{ header: "Header1", language: "Rust", description: "Desc", time: 218, rating: "8", author: authors, date: "2017-08-09" }, { header: "Header2", language: "C", description: "Desc", time: 18, rating: "9", author: authors, date: "2017-08-09" }, { header: "Header3", language: "C++", description: "Desc", time: 375, rating: "5", author: authors, date: "2017-08-09" }];
+interface Record {
+	log: {
+		id: number;
+		name: string;
+		description: string;
+		time: number;
+		date: number;
+		language: string;
+		rating: number;
+		tags: {
+			name: string;
+			description: string;
+			color: string;
+		}[];
+		tags_id: number[];
+	}
+}
 
 export default function RecordDivs() {
 	const [modalOpen, setModalOpen] = useState(-1);
 	const [editOpen, setEditOpen] = useState(-1);
 
+	const [records, setRecords] = useState<Record[]>();
+	const [isLoading, setIsLoading] = useState(false);
+
+	useEffect(() => {
+		setIsLoading(true);
+		fetch('https://localhost:3000/api/logs')
+			.then((res) => res.json())
+			.then((data) => {
+				setRecords(data);
+				setIsLoading(false);
+		})
+	}, []);
+
+	if (isLoading) return <h3>Loading</h3>
+
 	return (
 		<>
 			<div className={Record.spacer}></div>
 
-      {records.map((e, index) => (
-        <div key={index} className={Record.record} >
-          <button onClick={() => setModalOpen(index)} className={Record.h2} >{e.language} - {e.time} min</button>
-					<button onClick={() => setModalOpen(index)} >{e.author.logo}</button>
-					<button onClick={() => setModalOpen(index)} className={Record.h3} >{e.rating}/10</button>
-					<button onClick={() => setEditOpen(index)} >
-						<FontAwesomeIcon icon={faPencil} height={"1.8rem"} />
+      {records?.map(record => (
+        <div key={record.log.id} className={Record.record} >
+          <button onClick={() => setModalOpen(record.log.id)} className={Record.h2} >{record.log.language} - {record.log.time} min</button>
+					<button onClick={() => setModalOpen(record.log.id)} className={Record.h3} >{record.log.rating}/10</button>
+					<button onClick={() => setEditOpen(record.log.id)} >
+						<FontAwesomeIcon icon={faPencil} height={"28px"} />
 					</button>
 					<button>
-						<FontAwesomeIcon icon={faTrash} height={"1.8rem"} />
+						<FontAwesomeIcon icon={faTrash} height={28} />
 					</button>
         </div>
       ))}
 
 			<Dialog open={editOpen >= 0} onClose={() => setEditOpen(-1)} >
 				<Dialog.Panel className={Modals.modal} >
-					<form action='Send to Jakub' method="POST" className={Modals.addForm} >
-						<input defaultValue={records[editOpen]?.header} name="header" className={Modals.addInput} required />
+					<form className={Modals.addForm} >
+						<input defaultValue={records?records[editOpen].log.name:''} name="header" className={Modals.addInput} required />
 
 						<div className={Modals.inputFields} >
-							<Menu>
-								<Menu.Button className={Modals.addInputM}>Tags</Menu.Button>
-								<Menu.Items className={Modals.tags} >
-								{tags.map((e, index) => (
-									<Menu.Item key={index}>
-										{() => (
-											<p>{e.name}</p>
-										)}
-									</Menu.Item>
-								))}
-								</Menu.Items>
-							</Menu>
+							<ChooseTagsPopup/>
 
-							<input defaultValue={records[editOpen]?.language} name="language" className={Modals.addInput} required />
+							<input defaultValue={records?records[editOpen].log.language:''} name="language" className={Modals.addInput} required />
 						</div>
 
 						<div className={Modals.inputFields} >
-							<input defaultValue={records[editOpen]?.time} type="number" min="1" name="time" className={Modals.addInput} required />
+							<input defaultValue={records?records[editOpen].log.time:''} type="number" min="1" name="time" className={Modals.addInput} required />
 
-							<input defaultValue={records[editOpen]?.date} type="date" name="date" className={Modals.addInput} required />
+							<input defaultValue={records?records[editOpen].log.date:''} type="date" name="date" className={Modals.addInput} required />
 						</div>
 
-						<textarea defaultValue={records[editOpen]?.description} name="description" />
+						<textarea defaultValue={records?records[editOpen].log.description:''} name="description" />
 
 						<div>
 							<label htmlFor='Rating' >Rate yourself:</label>
 							<br/>
-							<input defaultValue={records[editOpen]?.rating} type="range" min="0" max="10" name="rating" required />
+							<input defaultValue={records?records[editOpen].log.rating:''} type="range" min="0" max="10" name="rating" required />
 						</div>
 
 						<button type="submit" className={Modals.submit} >Save edited</button>
@@ -82,18 +99,18 @@ export default function RecordDivs() {
 				<Dialog.Panel className={Modals.modal} >
 
 					<div className={Modals.header} >
-						<h2>{records[modalOpen]?.header}</h2>
-						<h3>{records[modalOpen]?.language}</h3>
+						<h2>{records?records[modalOpen].log.name:''}</h2>
+						<h3>{records?records[modalOpen].log.language:''}</h3>
 					</div>
 
 					<div className={Modals.body} >
-						<h4>{records[modalOpen]?.description}</h4>
+						<h4>{records?records[modalOpen].log.description:''}</h4>
 					</div>
 
-					<p className={Modals.time} >{records[modalOpen]?.time} min</p>
+					<p className={Modals.time} >{records?records[modalOpen].log.time:''} min</p>
 
 					<div className={Modals.progressBar} >
-						<div className={Modals.progressBarFiller} >{records[modalOpen]?.rating}</div>
+						<div className={Modals.progressBarFiller} >{records?records[modalOpen].log.rating:''}</div>
 					</div>
 
 					<button className={Modals.closeButton} onClick={() => setModalOpen(-1)} >

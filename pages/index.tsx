@@ -1,96 +1,123 @@
 import React, { useState } from 'react';
 import Head from 'next/head';
 import Link from 'next/link';
-import styles from '../styles/Home.module.css';
-import LeftBar from '../styles/LeftBar.module.css';
-import Modals from '../styles/Modals.module.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowDownWideShort, faClose, faFilter, faHome, faPlus, faTag, faUser } from '@fortawesome/free-solid-svg-icons';
-import { Menu, Dialog } from '@headlessui/react';
+import { Dialog } from '@headlessui/react';
+import Styles from '../styles/Home.module.css';
+import LeftBar from '../styles/LeftBar.module.css';
+import Modals from '../styles/Modals.module.css';
 import RecordDivs from '../components/record';
-import Tags from '../components/tags';
+import Tags, { ChooseTagsPopup } from '../components/tags';
+import { LoginData } from '../pages/_app'
 
-let tags = [{id: 1, clicked: true, name: "Tag1"}, {id: 2, clicked: false, name: "Tag2"}, {id: 3, clicked: false, name: "Tag3"}];
+interface Filter {
+	name: string;
+}
 
-export default function Home() {
+function Filter() {
+	const [selectedElements, setSelectedElements] = useState<Filter[]>([]);
+	const [isVisible, setIsVisible] = useState(false);
+
+	// TODO
+	// Create filters
+	let filters: Filter[] = [{name: "Filter"}, {name: "Filter"}];
+
+	function handleSelect(element: Filter) {
+		if (!selectedElements.find((e) => e.name === element.name)) {
+			setSelectedElements([...selectedElements, element]);
+		} else {
+			setSelectedElements(selectedElements.filter((e) => e.name != element.name));
+		}
+	}
+
+	return (
+		<div>
+			<button onClick={() => setIsVisible(!isVisible)} className={[Styles.filterButt, Styles.butt].join(" ")} ><FontAwesomeIcon icon={faFilter} height={"2rem"} />Filter</button>
+
+			{isVisible && (
+				<div className={[Styles.filter, Styles.popup].join(" ")} >
+					{filters.map((e, index) => (
+						<button key={index} onClick={() => handleSelect(e)}>{e.name}</button>
+					))}
+				</div>
+			)}
+		</div>
+	);
+}
+
+interface Sort {
+	name: string;
+}
+
+function Sort() {
+	const [selectedElements, setSelectedElements] = useState<Filter[]>([]);
+	const [isVisible, setIsVisible] = useState(false);
+
+	// TODO
+	// Create sorts
+	let sorts: Sort[] = [{name: "A-Z"}, {name: "Z-A"}];
+
+	function handleSelect(element: Filter) {
+		if (!selectedElements.find((e) => e.name === element.name)) {
+			setSelectedElements([...selectedElements, element]);
+		} else {
+			setSelectedElements(selectedElements.filter((e) => e.name != element.name));
+		}
+	}
+
+	return (
+		<div>
+			<button onClick={() => setIsVisible(!isVisible)} className={[Styles.sortButt, Styles.butt].join(" ")} ><FontAwesomeIcon icon={faArrowDownWideShort} height={"2rem"} />Sort</button>
+
+			{isVisible && (
+				<div className={[Styles.sort, Styles.popup].join(" ")} >
+					{sorts.map((e, index) => (
+						<button key={index} onClick={() => handleSelect(e)}>Sort: {e.name}</button>
+					))}
+				</div>
+			)}
+		</div>
+	);
+}
+
+interface Log {
+	header: string;
+	language: string;
+	time: number;
+	date: string;
+	description: string;
+	rating: number;
+}
+
+export interface Props {
+	loginData: LoginData;
+	setLoginData: (loginData: LoginData) => void;
+}
+
+export default function Index({ loginData, setLoginData }: Props) {
 	const [addOpen, setAddOpen] = useState(false);
-	const [signedIn, setSignedIn] = useState(false);
+	const [log, setLog] = useState<Log>({header: '', language: '', time: 0, date: '', description: '', rating: 0});
+
+	let signedIn = false;
+
+	// TODO
+	// Once I have id change this to ID
+	if (loginData.username != '') {
+		signedIn = true;
+	}
 
 	return (
 		<>
-
 			<Head>
 				<title>Tréninkový deník pro programátory</title>
 			</Head>
 
-			<div id={styles.body}>
+			<div id={Styles.body}>
 
-					<Menu>
-						<Menu.Button className={[styles.filterButt, styles.butt].join(" ")} ><FontAwesomeIcon icon={faFilter} height={"2rem"} />Filter</Menu.Button>
+				<Filter/>
 
-						<Menu.Items>
-							<div className={[styles.filter, styles.popup].join(" ")} >
-								<Menu.Item>
-								{({active}) => (
-										<button className={`${active ? 'selected' : ''}`}>
-											Filter
-										</button>
-									)}
-								</Menu.Item>
-
-								<Menu.Item>
-								{({active}) => (
-										<button className={`${active ? 'selected' : ''}`}>
-											Filter
-										</button>
-									)}
-								</Menu.Item>
-
-								<Menu.Item>
-									{() => (
-										<button>
-											Filter
-										</button>
-									)}
-								</Menu.Item>
-
-							</div>
-						</Menu.Items>
-					</Menu>
-
-				<Menu>
-						<Menu.Button className={[styles.sortButt, styles.butt].join(" ")} ><FontAwesomeIcon icon={faArrowDownWideShort} height={"2rem"} />Sort</Menu.Button>
-
-						<Menu.Items>
-							<div className={[styles.sort, styles.popup].join(" ")} >
-								<Menu.Item>
-									{({active}) => (
-										<button className={`${active ? 'selected' : ''}`}>
-											Sort A-Z
-										</button>
-									)}
-								</Menu.Item>
-
-								<Menu.Item>
-									{({active}) => (
-										<button className={`${active ? 'selected' : ''}`}>
-											Sort Z-A
-										</button>
-									)}
-								</Menu.Item>
-
-								<Menu.Item>
-									{() => (
-										<button>
-											Sort by date
-										</button>
-									)}
-								</Menu.Item>
-
-							</div>
-						</Menu.Items>
-					</Menu>
-
+				<Sort/>
 
 				<div id={LeftBar.LeftBar}>
 					<div>Logo</div>
@@ -114,10 +141,16 @@ export default function Home() {
 						<Tags numberOfButtons={3} />
 					</ul>
 
-					<Link href="/login" className={signedIn?LeftBar.hidden:LeftBar.Items} >
+					{!signedIn && (
+					<Link href="/login" className={LeftBar.Items} >
 						<FontAwesomeIcon icon={faUser} height={"2rem"} />
 						<h2>Sign in</h2>
 					</Link>
+						)}
+
+					{signedIn && (
+					<button onClick={() => setLoginData({username: '', id: 0})}>Logged in</button>
+						)}
 
 					<div className={signedIn?LeftBar.Items:LeftBar.hidden} >
 
@@ -125,50 +158,44 @@ export default function Home() {
 
 				</div>
 
-				<main id={styles.main} >
+				<main id={Styles.main} >
 
 					<RecordDivs/>
 
 				</main>
 
-				<button id={styles.addButton} onClick={() => setAddOpen(true)} ><FontAwesomeIcon icon={faPlus} height={"4rem"} /></button>
+				<button id={Styles.addButton} onClick={() => setAddOpen(true)} ><FontAwesomeIcon icon={faPlus} height={"4rem"} /></button>
 
 			</div>
 
+			{
+			// TODO
+			// add onSubmit to send it to db
+			// handle closing of the dialog when tags clicked
+			}
 			<Dialog open={addOpen} onClose={() => setAddOpen(false)} >
 				<Dialog.Panel className={[Modals.addRecordModal, Modals.modal].join(" ")} >
-					<form method="POST" className={Modals.addForm} >
-						<input placeholder='Header' name="header" className={Modals.addInput} required />
+					<form className={Modals.addForm} onSubmit={() => {}} >
+						<input value={log.header} onChange={e => { setLog({...log, header: e.currentTarget.value}); }} placeholder='Header' className={Modals.addInput} required />
 
 						<div className={Modals.inputFields} >
-							<Menu>
-								<Menu.Button className={Modals.addInputM}>Tags</Menu.Button>
-								<Menu.Items className={Modals.tags} >
-									{tags.map((e, index) => (
-										<Menu.Item key={index}>
-											{() => (
-											<p>{e.name}</p>
-											)}
-										</Menu.Item>
-									))}
-								</Menu.Items>
-							</Menu>
+							<ChooseTagsPopup/>
 
-							<input placeholder='Language' name="language" className={Modals.addInput} required />
+							<input value={log.language} onChange={e => { setLog({...log, language: e.currentTarget.value}); }} placeholder='Language' name="language" className={Modals.addInput} required />
 						</div>
 
 						<div className={Modals.inputFields} >
-							<input placeholder='Time spent' type="number" min="1" name="time" className={Modals.addInput} required />
+							<input value={log.time} onChange={e => { setLog({...log, time: parseInt(e.currentTarget.value)}); }} placeholder='Time spent' type="number" min="0" name="time" className={Modals.addInput} required />
 
-							<input placeholder='Date' type="date" name="date" className={Modals.addInput} required />
+							<input value={log.date} onChange={e => { setLog({...log, date: e.currentTarget.value}); }} placeholder='Date' type="date" name="date" className={Modals.addInput} required />
 						</div>
 
-						<textarea placeholder='Description' name="description" />
+						<textarea value={log.description} onChange={e => { setLog({...log, description: e.currentTarget.value}); }} placeholder='Description' name="description" />
 
 						<div>
 							<label htmlFor='Rating' >Rate yourself:</label>
 							<br/>
-							<input placeholder='Rating' type="range" min="0" max="10" name="rating" required />
+							<input value={log.rating} onChange={e => { setLog({...log, rating: parseInt(e.currentTarget.value)}); }} placeholder='Rating' type="range" min="0" max="10" name="rating" required />
 						</div>
 
 						<button type="submit" className={Modals.submit} >Save edited</button>
@@ -182,5 +209,5 @@ export default function Home() {
 			</Dialog>
 
 		</>
-	);
+		);
 }

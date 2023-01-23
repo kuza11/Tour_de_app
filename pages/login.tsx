@@ -1,35 +1,57 @@
-import { useState } from "react";
 import Style from '../styles/Login.module.css';
+import { useState } from "react";
+import Router from "next/router";
+import { Props } from '.';
+import Link from 'next/link';
 
-export default function Login() {
-	const [isRegistering, setIsRegistering] = useState(false);
+interface FormData {
+	username: string;
+	password: string;
+	id: number;
+}
+
+function Login({ setLoginData }: Props) {
+	const [formData, setFormData] = useState<FormData>({username: '', password: '', id: 0});
+
+	function handleChange(event: React.ChangeEvent<HTMLInputElement>) {
+		setFormData({...formData, [event.target.name]: event.target.value});
+	}
+
+	async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+		event.preventDefault();
+
+		try {
+			const res = await fetch(`https://localhost:3000/api/persons/${formData.id}`);
+			if (!res.ok) throw res;
+			setLoginData({username: formData.username, id: formData.id});
+			Router.push('/');
+		}
+		catch (error) {
+			console.log(error);
+		}
+	}
 
 	return (
-		<>
 			<div className={Style.body} >
-				<form action='.......' method="POST" className={Style.loginForm} >
+				<form className={Style.loginForm} onSubmit={handleSubmit} >
 					<h1>Online Deník</h1>
 
-					<input placeholder='Username' className={Style.input} name="username" required />
+					<input placeholder='username' className={Style.input} name="username" onChange={handleChange} value={formData.username} required />
 
-					<input placeholder='Password' className={Style.input} name="password" type={'password'} required />
+					<input placeholder='id' className={Style.input} name="id" onChange={handleChange} value={formData.id} type='number' required />
+
+					<input placeholder='password' className={Style.input} name="password" onChange={handleChange} value={formData.password} type='password' required />
 
 					<div className={Style.confirmation} >
-						{isRegistering ? (
-							<>
-								<button type="submit" className={Style.submit} onSubmit={() => setSignedIn(true)} >Create account</button>
-								<p>Already have an account? <button type="button" className={Style.link} onClick={() => setIsRegistering(false)}>Log in!</button></p>
-							</>
-							) : (
-								<>
-									<button type="submit" className={Style.submit} onSubmit={() => setSignedIn(true)} >Log in</button>
-									<p>Don&#39;t have an account yet? <button type="button" className={Style.link} onClick={() => setIsRegistering(true)}>Register now!</button></p>
-								</>
-						)}
+						<>
+							<button type="submit" className={Style.submit} >Log in</button>
+							<p>Don&#39;t have an account yet? <Link href='/register' className={Style.link} >Register now!</Link></p>
+						</>
 					</div>
 
 				</form>
 			</div>
-		</>
 	);
 }
+
+export default Login;

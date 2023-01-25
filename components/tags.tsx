@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Styles from '../styles/Home.module.css';
 import { Props } from "../pages";
 
@@ -28,15 +28,23 @@ function MyButtons({ numberOfButtons }: MyButtonProps) {
 
 export default MyButtons;
 
-interface Tag {
+export interface Tag {
 	id: number;
 	name: string;
 	color: string;
 }
 
-export function ChooseTagsPopup () {
-	const [selectedElements, setSelectedElements] = useState([]);
+export function ChooseTagsPopup ({ onChange }: { onChange: (value: Tag[]) => void }) {
+	const [selectedElements, setSelectedElements] = useState<Tag[]>([]);
 	const [isVisible, setIsVisible] = useState(false);
+	const [tags, setTags] = useState<Tag[]>([]);
+
+	useEffect(() => {
+		fetch('https://localhost:3000/api/tags')
+			.then((res) => res.json())
+			.then((data) => setTags(data))
+		}, []);
+
 
 	function handleSelect(element: Tag) {
 		if (!selectedElements.find((e) => e.name === element.name)) {
@@ -44,24 +52,18 @@ export function ChooseTagsPopup () {
 		} else {
 			setSelectedElements(selectedElements.filter((e) => e.name != element.name));
 		}
+		onChange(selectedElements);
 	}
 
-	async function getTags() {
-		const data = await fetch(`https://localhost:3000/api/tags`);
-		const tags = await data.json();
-
-	}
-
-	// TODO
-	// Get all the tags and then show them here
 	return (
 		<div>
-			<button onClick={() => {setIsVisible(!isVisible); getTags();}} >Tags</button>
+			<button type="button" onClick={() => {setIsVisible(!isVisible)}} >Tags</button>
 			{isVisible && (
 				<div className={Styles.popup} >
-					<button type="button" onClick={() => handleSelect({name: 'Tag 1'})}>Tag 1</button>
-					<button type="button" onClick={() => handleSelect({name: 'Tag 2'})}>Tag 2</button>
-					<button type="button" onClick={() => handleSelect({name: 'Tag 3'})}>Tag 3</button>
+					{
+					tags.map((tag) => (
+						<button key={tag.id} type="button" onClick={() => handleSelect(tag)}>{tag.name}</button>
+					))}
 				</div>
 			)}
 		</div>

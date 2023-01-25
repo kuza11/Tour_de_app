@@ -17,8 +17,6 @@ function Register({ setLoginData }: Props) {
 		setFormData({...formData, [event.target.name]: event.target.value});
 	}
 
-	// TODO
-	// Send the password and username to be checked and get the id back
 	async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
 		event.preventDefault();
 
@@ -62,10 +60,8 @@ function Register({ setLoginData }: Props) {
 				<input placeholder='repeat password' className={Style.input} name="password_test" onChange={handleChange} value={formData.password_test} type='password' required />
 
 				<div className={Style.confirmation} >
-					<>
-						<button type="submit" className={Style.submit} >Create account</button>
-						<p>Already have an account? <Link href='/login' className={Style.link}>Log in!</Link></p>
-					</>
+					<button type="submit" className={Style.submit} >Create account</button>
+					<p>Already have an account? <Link href='/login' className={Style.link}>Log in!</Link></p>
 				</div>
 
 			</form>

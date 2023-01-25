@@ -23,8 +23,13 @@ function Login({ setLoginData }: Props) {
 		try {
 			const res = await fetch(`https://localhost:3000/api/persons/${formData.id}`);
 			if (!res.ok) throw res;
-			setLoginData({username: formData.username, id: formData.id});
-			Router.push('/');
+			const data = await res.json();
+			if (data && data.password == formData.password) {
+				setLoginData({username: formData.username, id: formData.id});
+				Router.push('/');
+			} else {
+				alert("Passwords does not match");
+			}
 		}
 		catch (error) {
 			console.log(error);
@@ -32,26 +37,24 @@ function Login({ setLoginData }: Props) {
 	}
 
 	return (
-			<div className={Style.body} >
-				<form className={Style.loginForm} onSubmit={handleSubmit} >
-					<h1>Online Deník</h1>
+		<div className={Style.body} >
+			<form className={Style.loginForm} onSubmit={handleSubmit} >
+				<h1>Online Deník</h1>
 
-					<input placeholder='username' className={Style.input} name="username" onChange={handleChange} value={formData.username} required />
+				<input placeholder='Username' className={Style.input} name="username" onChange={handleChange} value={formData.username} required />
 
-					<input placeholder='id' className={Style.input} name="id" onChange={handleChange} value={formData.id} type='number' required />
+				<input placeholder='ID' className={Style.input} name="id" onChange={handleChange} value={formData.id==0?undefined:formData.id} type='number' required />
 
-					<input placeholder='password' className={Style.input} name="password" onChange={handleChange} value={formData.password} type='password' required />
+				<input placeholder='Password' className={Style.input} name="password" onChange={handleChange} value={formData.password} type='password' required />
 
-					<div className={Style.confirmation} >
-						<>
-							<button type="submit" className={Style.submit} >Log in</button>
-							<p>Don&#39;t have an account yet? <Link href='/register' className={Style.link} >Register now!</Link></p>
-						</>
-					</div>
+				<div className={Style.confirmation} >
+					<button type="submit" className={Style.submit} >Log in</button>
+					<p>Don&#39;t have an account yet? <Link href='/register' className={Style.link} >Register now!</Link></p>
+				</div>
 
-				</form>
-			</div>
-	);
+			</form>
+		</div>
+		);
 }
 
 export default Login;

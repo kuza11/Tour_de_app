@@ -41,7 +41,7 @@ export default function RecordDivs() {
 		})
 	}, []);
 
-	if (isLoading) return <h3>Loading</h3>
+	if (isLoading) return <h3 className={Modals.center} >Loading...</h3>
 
 	return (
 		<>
@@ -52,7 +52,7 @@ export default function RecordDivs() {
           <button onClick={() => setModalOpen(record.log.id)} className={Record.h2} >{record.log.language} - {record.log.time} min</button>
 					<button onClick={() => setModalOpen(record.log.id)} className={Record.h3} >{record.log.rating}/10</button>
 					<button onClick={() => setEditOpen(record.log.id)} >
-						<FontAwesomeIcon icon={faPencil} height={"28px"} />
+						<FontAwesomeIcon icon={faPencil} height={28} />
 					</button>
 					<button>
 						<FontAwesomeIcon icon={faTrash} height={28} />
@@ -60,6 +60,11 @@ export default function RecordDivs() {
         </div>
       ))}
 
+			{
+			//TODO
+			//Create a separate component for editing log
+			//Send it to db
+			}
 			<Dialog open={editOpen >= 0} onClose={() => setEditOpen(-1)} >
 				<Dialog.Panel className={Modals.modal} >
 					<form className={Modals.addForm} >
@@ -95,6 +100,10 @@ export default function RecordDivs() {
 				</Dialog.Panel>
 			</Dialog>
 
+			{
+			//TODO
+			//Create separate component
+			}
 			<Dialog open={modalOpen >= 0} onClose={() => setModalOpen(-1)} >
 				<Dialog.Panel className={Modals.modal} >
 
@@ -114,7 +123,7 @@ export default function RecordDivs() {
 					</div>
 
 					<button className={Modals.closeButton} onClick={() => setModalOpen(-1)} >
-						<FontAwesomeIcon icon={faX} height={"1.8rem"} />
+						<FontAwesomeIcon icon={faX} height={28} />
 					</button>
 
 				</Dialog.Panel>

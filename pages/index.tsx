@@ -8,7 +8,7 @@ import Styles from '../styles/Home.module.css';
 import LeftBar from '../styles/LeftBar.module.css';
 import Modals from '../styles/Modals.module.css';
 import RecordDivs from '../components/record';
-import Tags, { ChooseTagsPopup } from '../components/tags';
+import Tags, { ChooseTagsPopup, Tag } from '../components/tags';
 import { LoginData } from '../pages/_app'
 
 interface Filter {
@@ -33,7 +33,7 @@ function Filter() {
 
 	return (
 		<div>
-			<button onClick={() => setIsVisible(!isVisible)} className={[Styles.filterButt, Styles.butt].join(" ")} ><FontAwesomeIcon icon={faFilter} height={"2rem"} />Filter</button>
+			<button onClick={() => setIsVisible(!isVisible)} className={[Styles.filterButt, Styles.butt].join(" ")} ><FontAwesomeIcon icon={faFilter} height={32} />Filter</button>
 
 			{isVisible && (
 				<div className={[Styles.filter, Styles.popup].join(" ")} >
@@ -68,7 +68,7 @@ function Sort() {
 
 	return (
 		<div>
-			<button onClick={() => setIsVisible(!isVisible)} className={[Styles.sortButt, Styles.butt].join(" ")} ><FontAwesomeIcon icon={faArrowDownWideShort} height={"2rem"} />Sort</button>
+			<button onClick={() => setIsVisible(!isVisible)} className={[Styles.sortButt, Styles.butt].join(" ")} ><FontAwesomeIcon icon={faArrowDownWideShort} height={32} />Sort</button>
 
 			{isVisible && (
 				<div className={[Styles.sort, Styles.popup].join(" ")} >
@@ -88,6 +88,7 @@ interface Log {
 	date: string;
 	description: string;
 	rating: number;
+	tags: Tag[];
 }
 
 export interface Props {
@@ -97,14 +98,31 @@ export interface Props {
 
 export default function Index({ loginData, setLoginData }: Props) {
 	const [addOpen, setAddOpen] = useState(false);
-	const [log, setLog] = useState<Log>({header: '', language: '', time: 0, date: '', description: '', rating: 0});
+	const [log, setLog] = useState<Log>({header: '', language: '', time: 0, date: '', description: '', rating: 0, tags: []});
 
 	let signedIn = false;
 
-	// TODO
-	// Once I have id change this to ID
-	if (loginData.username != '') {
+	if (loginData.id != 0) {
 		signedIn = true;
+	}
+
+	function handleTagChange(tags: Tag[]) {
+		setLog({...log, tags: tags});
+	}
+
+	function handleTextAreaChange(event: React.ChangeEvent<HTMLTextAreaElement>) {
+		setLog({...log, [event.target.name]: event.target.value});
+	}
+
+	function handleChange(event: React.ChangeEvent<HTMLInputElement>) {
+		setLog({...log, [event.target.name]: event.target.value});
+	}
+
+	//TODO
+	//odeslat do db
+	async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+		event.preventDefault();
+
 	}
 
 	return (
@@ -123,17 +141,17 @@ export default function Index({ loginData, setLoginData }: Props) {
 					<div>Logo</div>
 
 					<Link className={[LeftBar.Items, LeftBar.homeGoalLink].join(" ")} href="/" >
-						<FontAwesomeIcon icon={faHome} height={"2rem"} />
+						<FontAwesomeIcon icon={faHome} height={32} />
 						<h2>Home</h2>
 					</Link>
 
 					<div id={LeftBar.Spacer} ></div>
 
 					<div className={LeftBar.Items} >
-						<FontAwesomeIcon icon={faTag} height={"2rem"} />
+						<FontAwesomeIcon icon={faTag} height={32} />
 						<h2>Tags</h2>
 						<button>
-							<FontAwesomeIcon icon={faPlus} height={"2rem"} />
+							<FontAwesomeIcon icon={faPlus} height={32} />
 						</button>
 					</div>
 
@@ -143,7 +161,7 @@ export default function Index({ loginData, setLoginData }: Props) {
 
 					{!signedIn && (
 					<Link href="/login" className={LeftBar.Items} >
-						<FontAwesomeIcon icon={faUser} height={"2rem"} />
+						<FontAwesomeIcon icon={faUser} height={32} />
 						<h2>Sign in</h2>
 					</Link>
 						)}
@@ -164,38 +182,41 @@ export default function Index({ loginData, setLoginData }: Props) {
 
 				</main>
 
-				<button id={Styles.addButton} onClick={() => setAddOpen(true)} ><FontAwesomeIcon icon={faPlus} height={"4rem"} /></button>
+				<button id={Styles.addButton} onClick={() => setAddOpen(true)} ><FontAwesomeIcon icon={faPlus} height={64} /></button>
 
 			</div>
 
 			{
 			// TODO
 			// add onSubmit to send it to db
-			// handle closing of the dialog when tags clicked
 			}
 			<Dialog open={addOpen} onClose={() => setAddOpen(false)} >
 				<Dialog.Panel className={[Modals.addRecordModal, Modals.modal].join(" ")} >
-					<form className={Modals.addForm} onSubmit={() => {}} >
-						<input value={log.header} onChange={e => { setLog({...log, header: e.currentTarget.value}); }} placeholder='Header' className={Modals.addInput} required />
+					<form className={Modals.addForm} onSubmit={handleSubmit} >
+						<input placeholder='Header' name='header' value={log.header} onChange={handleChange} className={Modals.addInput} required />
 
 						<div className={Modals.inputFields} >
-							<ChooseTagsPopup/>
+							<ChooseTagsPopup onChange={handleTagChange} />
 
+							{
+							//TODO
+							//Fill this with langs from db
+							}
 							<input value={log.language} onChange={e => { setLog({...log, language: e.currentTarget.value}); }} placeholder='Language' name="language" className={Modals.addInput} required />
 						</div>
 
 						<div className={Modals.inputFields} >
-							<input value={log.time} onChange={e => { setLog({...log, time: parseInt(e.currentTarget.value)}); }} placeholder='Time spent' type="number" min="0" name="time" className={Modals.addInput} required />
+							<input name='time' placeholder='Time spent' value={log.time} onChange={handleChange} type="number" min="0" className={Modals.addInput} required />
 
-							<input value={log.date} onChange={e => { setLog({...log, date: e.currentTarget.value}); }} placeholder='Date' type="date" name="date" className={Modals.addInput} required />
+							<input name='date' placeholder='Date' value={log.date} onChange={handleChange} type="date" className={Modals.addInput} required />
 						</div>
 
-						<textarea value={log.description} onChange={e => { setLog({...log, description: e.currentTarget.value}); }} placeholder='Description' name="description" />
+						<textarea name="description" value={log.description} onChange={handleTextAreaChange} placeholder='Description' />
 
 						<div>
-							<label htmlFor='Rating' >Rate yourself:</label>
+							<label htmlFor='rating' >Rate yourself:</label>
 							<br/>
-							<input value={log.rating} onChange={e => { setLog({...log, rating: parseInt(e.currentTarget.value)}); }} placeholder='Rating' type="range" min="0" max="10" name="rating" required />
+							<input placeholder='Rating' name='rating' value={log.rating} onChange={handleChange} type="range" min="0" max="10" required />
 						</div>
 
 						<button type="submit" className={Modals.submit} >Save edited</button>

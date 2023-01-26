@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import Head from 'next/head';
 import Link from 'next/link';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faArrowDownWideShort, faClose, faFilter, faHome, faPlus, faTag, faUser } from '@fortawesome/free-solid-svg-icons';
+import { faArrowDownWideShort, faClose, faFilter, faHome, faPencil, faPlus, faTag, faTrash, faUser } from '@fortawesome/free-solid-svg-icons';
 import { Dialog } from '@headlessui/react';
 import Styles from '../styles/Home.module.css';
 import LeftBar from '../styles/LeftBar.module.css';
@@ -11,6 +11,8 @@ import RecordDivs from '../components/record';
 import Tags, { ChooseTagsPopup, Tag } from '../components/tags';
 import { LoginData } from '../pages/_app'
 import ChooseLangPopup, { Language } from '../components/languages';
+import Image from 'next/image';
+import Logo from '../public/Programmers Journal.png';
 
 export interface Filter {
 	name: string;
@@ -109,19 +111,76 @@ interface NewTag {
 	color: string;
 }
 
+interface Profile {
+	username: string;
+	password: string;
+	password_check: string;
+	id: number;
+}
+
 export default function Index({ loginData, setLoginData }: Props) {
 	const [addOpen, setAddOpen] = useState(false);
-	const [addTagOpen, setAddTagOpen] = useState(false);
 	const [log, setLog] = useState<Log>({header: '', language: '', time: 0, date: '', description: '', rating: 0, tags: []});
+	const [addTagOpen, setAddTagOpen] = useState(false);
 	const [tag, setTag] = useState<NewTag>({name: '', description: '', color: ''});
+	const [editProfileOpen, setEditProfileOpen] = useState(false);
+	const [editProfile, setEditProfile] = useState<Profile>({username: loginData.username, password: '', password_check: '', id: loginData.id});
 
 	const [selectedFilters, setSelectedFilters] = useState<Filter[]>([]);
 	const [selectedSort, setSelectedSort] = useState<Sort | undefined>(undefined);
+	const [selectedTags, setSelectedTags] = useState<Tag[]>([]);
+	const [signedIn, setSignedIn] = useState(false);
 
-	let signedIn = false;
+
+	async function handleDeleteProfile() {
+		if (confirm("Are you sure you want to delete your account?")) {
+			const res = await fetch(`http://localhost:3000/api/persons/${loginData.id}`, {
+				method: 'DELETE',
+			});
+			// TODO
+			// Add the right code
+			if (res.status != 0) {
+				console.error(res);
+				alert("There was an error deleting your account");
+			} else {
+				setLoginData({id: 0, username: ''});
+				setSignedIn(false);
+			}
+		}
+	}
+
+	function handleChangeProfile(event: React.ChangeEvent<HTMLInputElement>) {
+		setEditProfile({...editProfile, [event.target.name]: event.target.value});
+	}
+
+	async function handleProfileEditSubmit(event: React.FormEvent<HTMLFormElement>) {
+		event.preventDefault();
+
+		if (confirm("Are you sure you want to change your accont?")) {
+			if (editProfile.password == editProfile.password_check) {
+				const res = await fetch(`http://localhost:3000/api/persons/${editProfile.id}`, {
+					method: 'PUT',
+					body: JSON.stringify({
+						username: editProfile.username,
+						password: editProfile.password,
+					}),
+					headers: {
+						'Content-Type': 'application/json',
+					},
+				});
+				// TODO
+				// Change for the right status
+				if (res.status != 0) {
+					console.error(res);
+				}
+			} else {
+				alert("Password does not match!");
+			}
+		}
+	}
 
 	if (loginData.id != 0) {
-		signedIn = true;
+		setSignedIn(true);
 	}
 
 	function handleTagChange(tags: Tag[]) {
@@ -194,7 +253,7 @@ export default function Index({ loginData, setLoginData }: Props) {
 				<Sort selectedSort={selectedSort} setSelectedSort={setSelectedSort} />
 
 				<div id={LeftBar.LeftBar}>
-					<div>Logo</div>
+					<Image src={Logo} alt="Logo" />
 
 					<Link className={[LeftBar.Items, LeftBar.homeGoalLink].join(" ")} href="/" >
 						<FontAwesomeIcon icon={faHome} height={32} />
@@ -212,23 +271,28 @@ export default function Index({ loginData, setLoginData }: Props) {
 					</div>
 
 					<ul>
-						<Tags numberOfButtons={3} />
+						<Tags selectedTags={selectedTags} setSelectedTags={setSelectedTags} />
 					</ul>
 
 					{!signedIn && (
-					<Link href="/login" className={LeftBar.Items} >
-						<FontAwesomeIcon icon={faUser} height={32} />
-						<h2>Sign in</h2>
-					</Link>
-						)}
+						<Link href="/login" className={LeftBar.Items} >
+							<FontAwesomeIcon icon={faUser} height={32} />
+							<h2>Sign in</h2>
+						</Link>
+					)}
 
 					{
 					// TODO
 					// Upravit profil
 					// Odstranit profil
+					// Styles
 					}
 					{signedIn && (
-						<button onClick={() => setLoginData({username: '', id: 0})}>Logged in</button>
+						<>
+							<button onClick={() => setLoginData({username: '', id: 0})} className={LeftBar.Items} >Logged in</button>
+							<button onClick={() => setEditProfileOpen(true)} ><FontAwesomeIcon icon={faPencil} height={18} /></button>
+							<button onClick={handleDeleteProfile} ><FontAwesomeIcon icon={faTrash} height={18} /></button>
+						</>
 					)}
 
 					<div className={signedIn?LeftBar.Items:LeftBar.hidden} >
@@ -239,7 +303,7 @@ export default function Index({ loginData, setLoginData }: Props) {
 
 				<main id={Styles.main} >
 
-					<RecordDivs personID={loginData.id} selectedFilters={selectedFilters} selectedSort={selectedSort} />
+					<RecordDivs personID={loginData.id} selectedFilters={selectedFilters} selectedSort={selectedSort} selectedTags={selectedTags} />
 
 				</main>
 
@@ -247,9 +311,21 @@ export default function Index({ loginData, setLoginData }: Props) {
 
 			</div>
 
+			<Dialog open={editProfileOpen} onClose={() => setEditProfileOpen(false)} >
+				<Dialog.Panel className={[Modals.modal].join(" ")} >
+					<form className={Modals.addForm} onSubmit={handleProfileEditSubmit} >
+						<input name='username' value={editProfile.username} onChange={handleChangeProfile} required />
+						<input name='password' value={editProfile.password} onChange={handleChangeProfile} type='password' required />
+						<input name='password_check' value={editProfile.password_check} onChange={handleChangeProfile} type='password' required />
+						<button onClick={() => setEditProfileOpen(false)} type='submit' >Submit</button>
+					</form>
+				</Dialog.Panel>
+			</Dialog>
+
 			{
 			// TODO
 			// add styles
+			// add labels
 			}
 			<Dialog open={addTagOpen} onClose={() => setAddTagOpen(false)} >
 				<Dialog.Panel className={[Modals.modal].join(" ")} >
@@ -257,6 +333,7 @@ export default function Index({ loginData, setLoginData }: Props) {
 						<input placeholder='Name' name='name' value={tag.name} onChange={handleChangeTag} className={Modals.addInput} required />
 						<input placeholder='Description' name='description' value={tag.description} onChange={handleChangeTag} className={Modals.addInput} />
 						<input placeholder='Color' name='color' value={tag.color} onChange={handleChangeTag} className={Modals.addInput} />
+						<button onClick={() => setAddTagOpen(false)} type='submit' >Submit</button>
 					</form>
 				</Dialog.Panel>
 			</Dialog>

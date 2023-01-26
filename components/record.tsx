@@ -32,9 +32,10 @@ interface recordDivsProps {
 	personID: number;
 	selectedFilters: Filter[];
 	selectedSort: Sort | undefined;
+	selectedTags: Tag[];
 }
 
-export default function RecordDivs({ personID, selectedFilters, selectedSort }: recordDivsProps) {
+export default function RecordDivs({ personID, selectedFilters, selectedSort, selectedTags }: recordDivsProps) {
 	const [modalOpen, setModalOpen] = useState(-1);
 	const [editOpen, setEditOpen] = useState(-1);
 
@@ -79,20 +80,22 @@ export default function RecordDivs({ personID, selectedFilters, selectedSort }: 
 		return year + '-' + month + '-' + day;
 	}
 
-	function editModal(id: number) {
-		setEditOpen(id);
+	function editModal(record: Record) {
+		setEditOpen(record.log.id);
 		setEditLog({
-			header: records[id].log.name,
-			description: records[id].log.description,
-			language: records[id].log.lang_name,
-			time: records[id].log.time,
-			date: getDate(records[id].log.date),
-			rating: records[id].log.rating,
-			tags: records[id].tags,
-			id: editOpen,
+			header: record.log.name,
+			description: record.log.description,
+			language: record.log.lang_name,
+			time: record.log.time,
+			date: getDate(record.log.date),
+			rating: record.log.rating,
+			tags: record.tags,
+			id: record.log.id,
 		});
 	}
 
+	// TODO
+	// After Jakub finishes, add sorting, filters, and tags
 	useEffect(() => {
 		setIsLoading(true);
 		if (selectedFilters.length > 0 && selectedSort) {
@@ -112,7 +115,7 @@ export default function RecordDivs({ personID, selectedFilters, selectedSort }: 
 				setIsLoading(false);
 		})
 		}
-	}, [personID, selectedFilters, selectedSort]);
+	}, [personID, selectedFilters, selectedSort, selectedTags]);
 
 	// TODO
 	// After Jakub finishes the endpoint, complete it
@@ -138,7 +141,7 @@ export default function RecordDivs({ personID, selectedFilters, selectedSort }: 
         <div key={record.log.id} className={Record.record} >
           <button onClick={() => setModalOpen(record.log.id)} className={Record.h2} >{record.log.lang_name} - {record.log.time} min</button>
 					<button onClick={() => setModalOpen(record.log.id)} className={Record.h3} >{record.log.rating}/10</button>
-					<button onClick={() => editModal(record.log.id)} >
+					<button onClick={() => editModal(record)} >
 						<FontAwesomeIcon icon={faPencil} height={28} />
 					</button>
 					<button onClick={() => deleteRecord(record.log.id)} >
@@ -147,10 +150,6 @@ export default function RecordDivs({ personID, selectedFilters, selectedSort }: 
         </div>
       ))}
 
-			{
-			// TODO
-			// Create a separate component for editing log
-			}
 			<Dialog open={editOpen >= 0} onClose={() => setEditOpen(-1)} >
 				<Dialog.Panel className={Modals.modal} >
 					<form className={Modals.addForm} onSubmit={sendEdited} >
@@ -186,10 +185,6 @@ export default function RecordDivs({ personID, selectedFilters, selectedSort }: 
 				</Dialog.Panel>
 			</Dialog>
 
-			{
-			// TODO
-			// Create separate component
-			}
 			<Dialog open={modalOpen >= 0} onClose={() => setModalOpen(-1)} >
 				<Dialog.Panel className={Modals.modal} >
 

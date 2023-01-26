@@ -37,12 +37,15 @@ function Register({ setLoginData }: Props) {
 				username: formData.username,
 				id: data.lastID,
 			});
+			alert("Your ID is " + data.id + ". Remember this number, you will need it to log in");
 			Router.push('/');
 		} else {
 			alert("Passwords doesn't match!");
 		};
 	}
 
+	// TODO
+	// Add labels
 	return (
 		<div className={Style.body} >
 			<form className={Style.loginForm} onSubmit={handleSubmit} >

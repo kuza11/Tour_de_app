@@ -1,17 +1,27 @@
 import { faPencil, faTrash } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { Dialog } from "@headlessui/react";
 import React, { useState, useEffect } from "react";
 import Styles from '../styles/Home.module.css';
+import Modals from '../styles/Modals.module.css';
 
-function Tags() {
-  const [selectedTags, setSelectedTags] = useState<Tag[]>([]);
+interface TagProps {
+	selectedTags: Tag[];
+	setSelectedTags: (selectedTags: Tag[]) => void;
+}
+
+function Tags({ selectedTags, setSelectedTags }: TagProps) {
 	const [tags, setTags] = useState<Tag[]>([]);
+	const [editTag, setEditTag] = useState<Tag>({name: '', description: '', color: '', id: 0});
+	const [editTagOpen, setEditTagOpen] = useState(false);
+
+	//const tags: Tag[] = [{id: 1, name: 'Tag', color: 'blue', description: ''}, {id: 2, name: 'Taggg', color: 'blue', description: ''}, {id: 3, name: 'Tag4', color: 'red', description: ''}, ];
 
 	useEffect(() => {
 		fetch('http://localhost:3000/api/tags')
 			.then((res) => res.json())
 			.then((data) => setTags(data))
-		}, []);
+	}, []);
 
 	function handleSelect(element: Tag) {
 		if (!selectedTags.find((e) => e.name === element.name)) {
@@ -21,8 +31,47 @@ function Tags() {
 		}
 	}
 
-	// TODO
-	// Add styles
+	function handleEdit(tag: Tag) {
+		setEditTag(tag);
+		setEditTagOpen(true);
+	}
+
+	async function handleDelete(tag: Tag) {
+		let res = await fetch(`http://api/tags/${tag.id}`, {
+			method: 'DELETE',
+		});
+		// TODO
+		// Exchange for the right status
+		if (res.status != 0) {
+			console.error(res);
+		}
+	}
+
+	function handleChangeEditTag(event: React.ChangeEvent<HTMLInputElement>) {
+		setEditTag({...editTag, [event.target.name]: event.target.value});
+	}
+
+	async function handleEditTagSubmit(event: React.FormEvent<HTMLFormElement>) {
+		event.preventDefault();
+
+		let res = await fetch(`http://api/tags/${editTag.id}`, {
+			method: 'PUT',
+			body: JSON.stringify({
+				name: editTag.name,
+				color: editTag.color,
+				description: editTag.description,
+			}),
+			headers: {
+				'Content-Type': 'apllication/json',
+			},
+		});
+		// TODO
+		// Change for the right status
+		if (res.status != 0) {
+			console.error(res);
+		}
+	}
+
   return (
 		<div>
 			{tags.map((tag: Tag, index: number) => (
@@ -30,8 +79,23 @@ function Tags() {
 					<button key={index} style={{ backgroundColor: tags.includes(selectedTags[index]) ? tag.color : 'transparent' }} onClick={() => handleSelect(tag)}>
 						Click me to change color
 					</button>
-					<button key={index}><FontAwesomeIcon icon={faPencil} /></button>
-					<button key={index}><FontAwesomeIcon icon={faTrash} /></button>
+					<button key={index} onClick={() => handleEdit(tag)} ><FontAwesomeIcon icon={faPencil} height={12} /></button>
+					<button key={index} onClick={() => handleDelete(tag)} ><FontAwesomeIcon icon={faTrash} height={12} /></button>
+
+
+					{
+					// TODO
+					// add styles
+					}
+					<Dialog open={editTagOpen} onClose={() => setEditTagOpen(false)} >
+						<Dialog.Panel className={[Modals.modal].join(" ")} >
+							<form className={Modals.addForm} onSubmit={handleEditTagSubmit} >
+								<input placeholder='Name' name='name' value={editTag.name} onChange={handleChangeEditTag} className={Modals.addInput} required />
+								<input placeholder='Description' name='description' value={editTag.description} onChange={handleChangeEditTag} className={Modals.addInput} />
+								<input placeholder='Color' name='color' value={editTag.color} onChange={handleChangeEditTag} className={Modals.addInput} />
+							</form>
+						</Dialog.Panel>
+					</Dialog>
 				</>
 			))}
 		</div>
@@ -44,6 +108,7 @@ export interface Tag {
 	id: number;
 	name: string;
 	color: string;
+	description: string;
 }
 
 export function ChooseTagsPopup ({ onChange }: { onChange: (value: Tag[]) => void }) {

@@ -20,22 +20,23 @@ function Login({ setLoginData }: Props) {
 	async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
 		event.preventDefault();
 
-		try {
-			const res = await fetch(`http://localhost:3000/api/persons/${formData.id}`);
-			if (!res.ok) throw res;
-			const data = await res.json();
-			if (data && data.password == formData.password) {
-				setLoginData({username: formData.username, id: formData.id});
-				Router.push('/');
-			} else {
-				alert("Passwords does not match");
-			}
-		}
-		catch (error) {
-			console.error(error);
+		const res = await fetch(`http://localhost:3000/api/persons/${formData.id}`);
+		// TODO
+		// Exchange this for the right status msg
+		if (!res.ok) {
+			console.error(res);
+		};
+		const data = await res.json();
+		if (data && data.password == formData.password) {
+			setLoginData({username: formData.username, id: formData.id});
+			Router.push('/');
+		} else {
+			alert("Passwords does not match");
 		}
 	}
 
+	// TODO
+	// Add labels
 	return (
 		<div className={Style.body} >
 			<form className={Style.loginForm} onSubmit={handleSubmit} >
@@ -43,7 +44,7 @@ function Login({ setLoginData }: Props) {
 
 				<input placeholder='Username' className={Style.input} name="username" onChange={handleChange} value={formData.username} required />
 
-				<input placeholder='ID' className={Style.input} name="id" onChange={handleChange} value={formData.id==0?undefined:formData.id} type='number' required />
+				<input placeholder='ID' className={Style.input} name="id" onChange={handleChange} value={formData.id} type='number' required />
 
 				<input placeholder='Password' className={Style.input} name="password" onChange={handleChange} value={formData.password} type='password' required />
 

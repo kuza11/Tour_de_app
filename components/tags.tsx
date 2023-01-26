@@ -4,6 +4,7 @@ import { Dialog } from "@headlessui/react";
 import React, { useState, useEffect } from "react";
 import Styles from '../styles/Home.module.css';
 import Modals from '../styles/Modals.module.css';
+import Login from '../styles/Login.module.css';
 
 interface TagProps {
 	selectedTags: Tag[];
@@ -51,6 +52,10 @@ function Tags({ selectedTags, setSelectedTags }: TagProps) {
 		setEditTag({...editTag, [event.target.name]: event.target.value});
 	}
 
+	function handleTextAreaChangeEditTag(event: React.ChangeEvent<HTMLTextAreaElement>) {
+		setEditTag({...editTag, [event.target.name]: event.target.value});
+	}
+
 	async function handleEditTagSubmit(event: React.FormEvent<HTMLFormElement>) {
 		event.preventDefault();
 
@@ -73,42 +78,27 @@ function Tags({ selectedTags, setSelectedTags }: TagProps) {
   return (
 		<div>
 			{tags.map((tag: Tag, index: number) => (
-				<>
-					<button key={index} style={{ backgroundColor: tags.includes(selectedTags[index]) ? tag.color : 'transparent' }} onClick={() => handleSelect(tag)}>
+				<div key={index}>
+					<button style={{ backgroundColor: tags.includes(selectedTags[index]) ? tag.color : 'transparent' }} onClick={() => handleSelect(tag)}>
 						Click me to change color
 					</button>
-					<button key={index} onClick={() => handleEdit(tag)} ><FontAwesomeIcon icon={faPencil} height={12} /></button>
-					<button key={index} onClick={() => handleDelete(tag)} ><FontAwesomeIcon icon={faTrash} height={12} /></button>
-
-
-					{
-					// TODO
-					// add styles
-					}
-					<Dialog open={editTagOpen} onClose={() => setEditTagOpen(false)} >
-						<Dialog.Panel className={[Modals.tagModal].join(" ")} >
-							<form className={Modals.addForm} onSubmit={handleEditTagSubmit} >
-								<h2>Tag</h2>
-								<div>
-									<input placeholder='Name' name='name' value={editTag.name} onChange={handleChangeEditTag} className={Modals.addInput} required />
-									<label>Name</label>
-								</div>
-								<div>
-									<input placeholder='Description' name='description' value={editTag.description} onChange={handleChangeEditTag} className={Modals.addInput} />
-									<label>Description</label>
-								</div>
-								<div>
-									<input placeholder='Color' name='color' value={editTag.color} onChange={handleChangeEditTag} className={Modals.addInput} />
-									<label>Color</label>
-								</div>
-								<button type="submit" onClick={() => setEditTagOpen(false)}>Submit</button>
-							</form>
-						</Dialog.Panel>
-					</Dialog>
-				</>
+					<button onClick={() => handleEdit(tag)} ><FontAwesomeIcon icon={faPencil} height={12} /></button>
+					<button onClick={() => handleDelete(tag)} ><FontAwesomeIcon icon={faTrash} height={12} /></button>
+				</div>
 			))}
+
+			<Dialog open={editTagOpen} onClose={() => setEditTagOpen(false)} >
+				<Dialog.Panel className={[Modals.tagModal].join(" ")} >
+					<form className={Modals.addForm} onSubmit={handleEditTagSubmit} >
+						<input placeholder='Name' name='name' value={editTag.name} onChange={handleChangeEditTag} className={Modals.addInput} required />
+						<input placeholder='Color' name='color' value={editTag.color} onChange={handleChangeEditTag} className={Modals.addInput} />
+						<textarea placeholder='Description' name='description' value={editTag.description} onChange={handleTextAreaChangeEditTag} />
+						<button type="submit" onClick={() => setEditTagOpen(false)} className={Login.submit} >Submit</button>
+					</form>
+				</Dialog.Panel>
+			</Dialog>
 		</div>
-  );
+	);
 }
 
 export default Tags;

@@ -1,5 +1,6 @@
 import Record from '../styles/Record.module.css';
 import Modals from '../styles/Modals.module.css';
+import Login from '../styles/Login.module.css';
 import { Dialog } from '@headlessui/react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPencil, faTrash, faX, faClose } from '@fortawesome/free-solid-svg-icons';
@@ -133,7 +134,7 @@ export default function RecordDivs({ personID, selectedSort, selectedTags }: rec
 			<div className={Record.spacer}></div>
 
       {records?.map(record => (
-        <div key={record.log.id} className={Record.record} >
+        <div key={record.log.id + 700} className={Record.record} >
           <button onClick={() => setModalOpen(record.log.id)} className={Record.h2} >{record.log.lang_name} - {record.log.time} min</button>
 					<button onClick={() => setModalOpen(record.log.id)} className={Record.h3} >{record.log.rating}/10</button>
 					<button onClick={() => editModal(record)} >
@@ -170,7 +171,7 @@ export default function RecordDivs({ personID, selectedSort, selectedTags }: rec
 							<input value={editLog.rating} type="range" min="0" max="10" name="rating" onChange={handleChange} required />
 						</div>
 
-						<button type="submit" className={Modals.submit} >Save edited</button>
+						<button type="submit" className={Login.submit} >Save edited</button>
 
 						<button onClick={() => setEditOpen(-1)} className={Modals.closeButton} >
 							<FontAwesomeIcon icon={faClose} />

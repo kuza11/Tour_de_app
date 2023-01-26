@@ -33,8 +33,6 @@ function Login({ setLoginData }: Props) {
 		}
 	}
 
-	// TODO
-	// Add labels
 	return (
 		<div className={Style.body} >
 			<form className={Style.loginForm} onSubmit={handleSubmit} >
@@ -53,7 +51,7 @@ function Login({ setLoginData }: Props) {
 
 			</form>
 		</div>
-		);
+	);
 }
 
 export default Login;

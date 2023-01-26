@@ -44,7 +44,7 @@ function Register({ setLoginData }: Props) {
 		};
 	}
 
-	// TODO
+	// rODO
 	// Add labels
 	return (
 		<div className={Style.body} >

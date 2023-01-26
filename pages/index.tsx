@@ -7,6 +7,7 @@ import { Dialog } from '@headlessui/react';
 import Styles from '../styles/Home.module.css';
 import LeftBar from '../styles/LeftBar.module.css';
 import Modals from '../styles/Modals.module.css';
+import Login from '../styles/Login.module.css';
 import RecordDivs from '../components/record';
 import Tags, { ChooseTagsPopup, Tag } from '../components/tags';
 import { LoginData } from '../pages/_app'
@@ -100,7 +101,7 @@ export default function Index({ loginData, setLoginData }: Props) {
 
 	const [selectedSort, setSelectedSort] = useState<Sort | undefined>(undefined);
 	const [selectedTags, setSelectedTags] = useState<Tag[]>([]);
-	const [signedIn, setSignedIn] = useState(false);
+	const [signedIn, setSignedIn] = useState(true);
 
 
 	async function handleDeleteProfile() {
@@ -140,6 +141,8 @@ export default function Index({ loginData, setLoginData }: Props) {
 				if (res.status != 200) {
 					console.error(res);
 				}
+				setLoginData({...loginData, username: editProfile.username});
+				setEditProfile({...loginData, password: '', password_check: ''});
 			} else {
 				alert("Password does not match!");
 			}
@@ -167,6 +170,10 @@ export default function Index({ loginData, setLoginData }: Props) {
 	}
 
 	function handleChangeTag(event: React.ChangeEvent<HTMLInputElement>) {
+		setTag({...tag, [event.target.name]: event.target.value});
+	}
+
+	function handleTextAreaChangeTag(event: React.ChangeEvent<HTMLTextAreaElement>) {
 		setTag({...tag, [event.target.name]: event.target.value});
 	}
 
@@ -251,16 +258,12 @@ export default function Index({ loginData, setLoginData }: Props) {
 					// Styles
 					}
 					{signedIn && (
-						<>
-							<button onClick={() => setLoginData({username: '', id: 0})} className={LeftBar.Items} >Logged in</button>
+						<div className={LeftBar.Items} >
+							<button onClick={() => {setLoginData({username: '', id: 0}); setSignedIn(false);}} className={LeftBar.Items} >Sign out</button>
 							<button onClick={() => setEditProfileOpen(true)} ><FontAwesomeIcon icon={faPencil} height={18} /></button>
 							<button onClick={handleDeleteProfile} ><FontAwesomeIcon icon={faTrash} height={18} /></button>
-						</>
+						</div>
 					)}
-
-					<div className={signedIn?LeftBar.Items:LeftBar.hidden} >
-
-					</div>
 
 				</div>
 
@@ -274,13 +277,17 @@ export default function Index({ loginData, setLoginData }: Props) {
 
 			</div>
 
+			{
+			// TODO
+			// Styles
+			}
 			<Dialog open={editProfileOpen} onClose={() => setEditProfileOpen(false)} >
 				<Dialog.Panel className={[Modals.modal].join(" ")} >
 					<form className={Modals.addForm} onSubmit={handleProfileEditSubmit} >
-						<input name='username' value={editProfile.username} onChange={handleChangeProfile} required />
-						<input name='password' value={editProfile.password} onChange={handleChangeProfile} type='password' required />
-						<input name='password_check' value={editProfile.password_check} onChange={handleChangeProfile} type='password' required />
-						<button onClick={() => setEditProfileOpen(false)} type='submit' >Submit</button>
+						<input placeholder='Username' name='username' value={editProfile.username} onChange={handleChangeProfile} className={Modals.addInput} required />
+						<input placeholder='Password' name='password' value={editProfile.password} onChange={handleChangeProfile} type='password' className={Modals.addInput} required />
+						<input placeholder='Password again' name='password_check' value={editProfile.password_check} onChange={handleChangeProfile} type='password' className={Modals.addInput} required />
+						<button onClick={() => setEditProfileOpen(false)} type='submit' className={Login.submit} >Submit</button>
 					</form>
 				</Dialog.Panel>
 			</Dialog>
@@ -288,15 +295,14 @@ export default function Index({ loginData, setLoginData }: Props) {
 			{
 			// TODO
 			// add styles
-			// add labels
 			}
 			<Dialog open={addTagOpen} onClose={() => setAddTagOpen(false)} >
-				<Dialog.Panel className={[Modals.modal].join(" ")} >
+				<Dialog.Panel className={[Modals.tagModal].join(" ")} >
 					<form className={Modals.addForm} onSubmit={handleTagSubmit} >
 						<input placeholder='Name' name='name' value={tag.name} onChange={handleChangeTag} className={Modals.addInput} required />
-						<input placeholder='Description' name='description' value={tag.description} onChange={handleChangeTag} className={Modals.addInput} />
 						<input placeholder='Color' name='color' value={tag.color} onChange={handleChangeTag} className={Modals.addInput} />
-						<button onClick={() => setAddTagOpen(false)} type='submit' >Submit</button>
+						<textarea placeholder='Description' name='description' value={tag.description} onChange={handleTextAreaChangeTag} />
+						<button onClick={() => setAddTagOpen(false)} type='submit' className={Login.submit} >Submit</button>
 					</form>
 				</Dialog.Panel>
 			</Dialog>
@@ -326,7 +332,7 @@ export default function Index({ loginData, setLoginData }: Props) {
 							<input placeholder='Rating' name='rating' value={log.rating} onChange={handleChange} type="range" min="0" max="10" required />
 						</div>
 
-						<button type="submit" className={Modals.submit} >Save edited</button>
+						<button type="submit" className={Login.submit} >Save edited</button>
 
 						<button onClick={() => setAddOpen(false)} className={Modals.closeButton} >
 							<FontAwesomeIcon icon={faClose} />

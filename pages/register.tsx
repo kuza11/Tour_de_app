@@ -21,28 +21,23 @@ function Register({ setLoginData }: Props) {
 		event.preventDefault();
 
 		if (formData.password === formData.password_test) {
-			try {
-				const res = await fetch('https://localhost:3000/api/persons', {
-					method: 'POST',
-					body: JSON.stringify({
-						username: formData.username,
-						password: formData.password,
-						title: undefined,
-						description: undefined,
-					}),
-					headers: { 'Content-Type': 'application/json' },
-				});
-				if (!res.ok) throw res;
-				const data = await res.json();
-				setLoginData({
+			const res = await fetch('http://localhost:3000/api/persons', {
+				method: 'POST',
+				body: JSON.stringify({
 					username: formData.username,
-					id: data.lastID,
-				});
-				Router.push('/');
-			}
-			catch (error) {
-				alert(error);
-			}
+					password: formData.password,
+					title: undefined,
+					description: undefined,
+				}),
+				headers: { 'Content-Type': 'application/json' },
+			});
+			if (res.status != 201) console.error(res);
+			const data = await res.json();
+			setLoginData({
+				username: formData.username,
+				id: data.lastID,
+			});
+			Router.push('/');
 		} else {
 			alert("Passwords doesn't match!");
 		};

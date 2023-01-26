@@ -10,24 +10,29 @@ import Modals from '../styles/Modals.module.css';
 import RecordDivs from '../components/record';
 import Tags, { ChooseTagsPopup, Tag } from '../components/tags';
 import { LoginData } from '../pages/_app'
+import ChooseLangPopup, { Language } from '../components/languages';
 
-interface Filter {
+export interface Filter {
 	name: string;
 }
 
-function Filter() {
-	const [selectedElements, setSelectedElements] = useState<Filter[]>([]);
+export interface filterProps {
+	selectedFilters: Filter[];
+	setSelectedFilters: (selectedFilters: Filter[]) => void;
+}
+
+function Filter({ selectedFilters, setSelectedFilters }: filterProps) {
 	const [isVisible, setIsVisible] = useState(false);
 
 	// TODO
 	// Create filters
-	let filters: Filter[] = [{name: "Filter"}, {name: "Filter"}];
+	let filters: Filter[] = [{name: "Filter1"}, {name: "Filter1"}];
 
 	function handleSelect(element: Filter) {
-		if (!selectedElements.find((e) => e.name === element.name)) {
-			setSelectedElements([...selectedElements, element]);
+		if (!selectedFilters.find((e) => e.name === element.name)) {
+			setSelectedFilters([...selectedFilters, element]);
 		} else {
-			setSelectedElements(selectedElements.filter((e) => e.name != element.name));
+			setSelectedFilters(selectedFilters.filter((e) => e.name != element.name));
 		}
 	}
 
@@ -46,23 +51,25 @@ function Filter() {
 	);
 }
 
-interface Sort {
+export interface Sort {
 	name: string;
 }
 
-function Sort() {
-	const [selectedElements, setSelectedElements] = useState<Filter[]>([]);
+export interface sortProps {
+	selectedSort: Sort | undefined;
+	setSelectedSort: (selectedSort: Sort | undefined) => void;
+}
+
+function Sort({ selectedSort, setSelectedSort }: sortProps) {
 	const [isVisible, setIsVisible] = useState(false);
 
-	// TODO
-	// Create sorts
-	let sorts: Sort[] = [{name: "A-Z"}, {name: "Z-A"}];
+	let sorts: Sort[] = [{name: "A-Z"}, {name: "Z-A"}, {name: "Old-New"}, {name: "New-Old"}, {name: "Long-Short"}, {name: "Short-Long"}];
 
 	function handleSelect(element: Filter) {
-		if (!selectedElements.find((e) => e.name === element.name)) {
-			setSelectedElements([...selectedElements, element]);
+		if (selectedSort?.name === element.name) {
+			setSelectedSort(undefined);
 		} else {
-			setSelectedElements(selectedElements.filter((e) => e.name != element.name));
+			setSelectedSort(element);
 		}
 	}
 
@@ -73,7 +80,7 @@ function Sort() {
 			{isVisible && (
 				<div className={[Styles.sort, Styles.popup].join(" ")} >
 					{sorts.map((e, index) => (
-						<button key={index} onClick={() => handleSelect(e)}>Sort: {e.name}</button>
+						<button key={index} onClick={() => handleSelect(e)}>{e.name}</button>
 					))}
 				</div>
 			)}
@@ -81,7 +88,7 @@ function Sort() {
 	);
 }
 
-interface Log {
+export interface Log {
 	header: string;
 	language: string;
 	time: number;
@@ -96,9 +103,20 @@ export interface Props {
 	setLoginData: (loginData: LoginData) => void;
 }
 
+interface NewTag {
+	name: string;
+	description: string;
+	color: string;
+}
+
 export default function Index({ loginData, setLoginData }: Props) {
 	const [addOpen, setAddOpen] = useState(false);
+	const [addTagOpen, setAddTagOpen] = useState(false);
 	const [log, setLog] = useState<Log>({header: '', language: '', time: 0, date: '', description: '', rating: 0, tags: []});
+	const [tag, setTag] = useState<NewTag>({name: '', description: '', color: ''});
+
+	const [selectedFilters, setSelectedFilters] = useState<Filter[]>([]);
+	const [selectedSort, setSelectedSort] = useState<Sort | undefined>(undefined);
 
 	let signedIn = false;
 
@@ -110,6 +128,10 @@ export default function Index({ loginData, setLoginData }: Props) {
 		setLog({...log, tags: tags});
 	}
 
+	function handleLangChange(lang: Language) {
+		setLog({...log, language: lang.name});
+	}
+
 	function handleTextAreaChange(event: React.ChangeEvent<HTMLTextAreaElement>) {
 		setLog({...log, [event.target.name]: event.target.value});
 	}
@@ -118,11 +140,45 @@ export default function Index({ loginData, setLoginData }: Props) {
 		setLog({...log, [event.target.name]: event.target.value});
 	}
 
-	//TODO
-	//odeslat do db
+	function handleChangeTag(event: React.ChangeEvent<HTMLInputElement>) {
+		setTag({...tag, [event.target.name]: event.target.value});
+	}
+
+	async function handleTagSubmit(event: React.FormEvent<HTMLFormElement>) {
+		event.preventDefault();
+
+		const res = await fetch('http://localhost:3000/api/tags', {
+			method: 'POST',
+			body: JSON.stringify({
+				name: tag.name,
+				description: tag.description,
+				color: tag.color,
+			}),
+			headers: { 'Content-Type': 'application/json' },
+		});
+		if (res.status != 201) {
+			console.error(res);
+		}
+	}
+
 	async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
 		event.preventDefault();
 
+		const res = await fetch(`http://localhost:3000/api/person/logs/${loginData.id}`, {
+			method: 'POST',
+			body: JSON.stringify({
+				name: log.header,
+				description: log.description,
+				time: log.time,
+				date: Date.parse(log.date) / 1000,
+				language: log.language,
+				tags_id: log.tags.map((tag) => tag.id),
+			}),
+			headers: { 'Content-Type': 'application/json' },
+		});
+		if (res.status != 201) {
+			console.error(res);
+		}
 	}
 
 	return (
@@ -133,9 +189,9 @@ export default function Index({ loginData, setLoginData }: Props) {
 
 			<div id={Styles.body}>
 
-				<Filter/>
+				<Filter selectedFilters={selectedFilters} setSelectedFilters={setSelectedFilters} />
 
-				<Sort/>
+				<Sort selectedSort={selectedSort} setSelectedSort={setSelectedSort} />
 
 				<div id={LeftBar.LeftBar}>
 					<div>Logo</div>
@@ -150,7 +206,7 @@ export default function Index({ loginData, setLoginData }: Props) {
 					<div className={LeftBar.Items} >
 						<FontAwesomeIcon icon={faTag} height={32} />
 						<h2>Tags</h2>
-						<button>
+						<button onClick={() => setAddTagOpen(true)} >
 							<FontAwesomeIcon icon={faPlus} height={32} />
 						</button>
 					</div>
@@ -166,9 +222,14 @@ export default function Index({ loginData, setLoginData }: Props) {
 					</Link>
 						)}
 
+					{
+					// TODO
+					// Upravit profil
+					// Odstranit profil
+					}
 					{signedIn && (
-					<button onClick={() => setLoginData({username: '', id: 0})}>Logged in</button>
-						)}
+						<button onClick={() => setLoginData({username: '', id: 0})}>Logged in</button>
+					)}
 
 					<div className={signedIn?LeftBar.Items:LeftBar.hidden} >
 
@@ -178,7 +239,7 @@ export default function Index({ loginData, setLoginData }: Props) {
 
 				<main id={Styles.main} >
 
-					<RecordDivs/>
+					<RecordDivs personID={loginData.id} selectedFilters={selectedFilters} selectedSort={selectedSort} />
 
 				</main>
 
@@ -188,8 +249,18 @@ export default function Index({ loginData, setLoginData }: Props) {
 
 			{
 			// TODO
-			// add onSubmit to send it to db
+			// add styles
 			}
+			<Dialog open={addTagOpen} onClose={() => setAddTagOpen(false)} >
+				<Dialog.Panel className={[Modals.modal].join(" ")} >
+					<form className={Modals.addForm} onSubmit={handleTagSubmit} >
+						<input placeholder='Name' name='name' value={tag.name} onChange={handleChangeTag} className={Modals.addInput} required />
+						<input placeholder='Description' name='description' value={tag.description} onChange={handleChangeTag} className={Modals.addInput} />
+						<input placeholder='Color' name='color' value={tag.color} onChange={handleChangeTag} className={Modals.addInput} />
+					</form>
+				</Dialog.Panel>
+			</Dialog>
+
 			<Dialog open={addOpen} onClose={() => setAddOpen(false)} >
 				<Dialog.Panel className={[Modals.addRecordModal, Modals.modal].join(" ")} >
 					<form className={Modals.addForm} onSubmit={handleSubmit} >
@@ -198,11 +269,7 @@ export default function Index({ loginData, setLoginData }: Props) {
 						<div className={Modals.inputFields} >
 							<ChooseTagsPopup onChange={handleTagChange} />
 
-							{
-							//TODO
-							//Fill this with langs from db
-							}
-							<input value={log.language} onChange={e => { setLog({...log, language: e.currentTarget.value}); }} placeholder='Language' name="language" className={Modals.addInput} required />
+							<ChooseLangPopup onChange={handleLangChange} />
 						</div>
 
 						<div className={Modals.inputFields} >

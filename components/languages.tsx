@@ -1,37 +1,31 @@
-interface Language {
+import { useEffect, useState } from "react";
+import Styles from '../styles/Home.module.css';
+
+export interface Language {
 	id: number;
 	name: string;
 	color: string;
 }
 
-export function ChooseTagsPopup () {
-	const [selectedElements, setSelectedElements] = useState<Language[]>([]);
+export default function ChooseLangPopup ({ onChange }: { onChange: (value: Language) => void}) {
 	const [isVisible, setIsVisible] = useState(false);
-	const [tags, setTags] = useState<Tag[]>([]);
+	const [languages, setLanguages] = useState<Language[]>([]);
 
 	useEffect(() => {
-		fetch('https://localhost:3000/api/tags')
+		fetch('http://localhost:3000/api/languages')
 			.then((res) => res.json())
-			.then((data) => setTags(data))
+			.then((data) => setLanguages(data))
 		}, []);
 
 
-	function handleSelect(element: Tag) {
-		if (!selectedElements.find((e) => e.name === element.name)) {
-			setSelectedElements([...selectedElements, element]);
-		} else {
-			setSelectedElements(selectedElements.filter((e) => e.name != element.name));
-		}
-	}
-
 	return (
 		<div>
-			<button type="button" onClick={() => {setIsVisible(!isVisible)}} >Tags</button>
+			<button type="button" onClick={() => {setIsVisible(!isVisible)}} >Languages</button>
 			{isVisible && (
 				<div className={Styles.popup} >
 					{
-					tags.map((tag) => (
-						<button key={tag.id} type="button" onClick={() => handleSelect(tag)}>{tag.name}</button>
+					languages.map((lang) => (
+						<button key={lang.id} type="button" onClick={() => onChange(lang)}>{lang.name}</button>
 					))}
 				</div>
 			)}

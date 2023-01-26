@@ -1,32 +1,44 @@
+import { faPencil, faTrash } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React, { useState, useEffect } from "react";
 import Styles from '../styles/Home.module.css';
-import { Props } from "../pages";
 
-interface MyButtonProps {
-	numberOfButtons: number;
-}
+function Tags() {
+  const [selectedTags, setSelectedTags] = useState<Tag[]>([]);
+	const [tags, setTags] = useState<Tag[]>([]);
 
-function MyButtons({ numberOfButtons }: MyButtonProps) {
-  const [tags, setTags] = useState(Array(numberOfButtons).fill(false));
+	useEffect(() => {
+		fetch('http://localhost:3000/api/tags')
+			.then((res) => res.json())
+			.then((data) => setTags(data))
+		}, []);
 
-  function handleClick(index: number) {
-    const newTags = [...tags];
-    newTags[index] = !newTags[index];
-    setTags(newTags);
-  }
+	function handleSelect(element: Tag) {
+		if (!selectedTags.find((e) => e.name === element.name)) {
+			setSelectedTags([...selectedTags, element]);
+		} else {
+			setSelectedTags(selectedTags.filter((e) => e.name != element.name));
+		}
+	}
 
+	// TODO
+	// Add styles
   return (
-    <div>
-      {tags.map((_, index) => (
-        <button key={index} style={{ backgroundColor: tags[index] ? 'red' : 'blue' }} onClick={() => handleClick(index)}>
-          Click me to change color
-        </button>
-      ))}
-    </div>
+		<div>
+			{tags.map((tag: Tag, index: number) => (
+				<>
+					<button key={index} style={{ backgroundColor: tags.includes(selectedTags[index]) ? tag.color : 'transparent' }} onClick={() => handleSelect(tag)}>
+						Click me to change color
+					</button>
+					<button key={index}><FontAwesomeIcon icon={faPencil} /></button>
+					<button key={index}><FontAwesomeIcon icon={faTrash} /></button>
+				</>
+			))}
+		</div>
   );
 }
 
-export default MyButtons;
+export default Tags;
 
 export interface Tag {
 	id: number;
@@ -40,7 +52,7 @@ export function ChooseTagsPopup ({ onChange }: { onChange: (value: Tag[]) => voi
 	const [tags, setTags] = useState<Tag[]>([]);
 
 	useEffect(() => {
-		fetch('https://localhost:3000/api/tags')
+		fetch('http://localhost:3000/api/tags')
 			.then((res) => res.json())
 			.then((data) => setTags(data))
 		}, []);

@@ -5,6 +5,9 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPencil, faTrash, faX, faClose } from '@fortawesome/free-solid-svg-icons';
 import React, { useEffect, useState } from 'react';
 import { ChooseTagsPopup } from './tags';
+import ChooseLangPopup, { Language } from './languages';
+import { Log, Filter, Sort } from '../pages';
+import { Tag } from './tags';
 
 interface Record {
 	log: {
@@ -13,33 +16,117 @@ interface Record {
 		description: string;
 		time: number;
 		date: number;
-		language: string;
 		rating: number;
-		tags: {
-			name: string;
-			description: string;
-			color: string;
-		}[];
-		tags_id: number[];
-	}
+		persons_id: number;
+		username: string;
+		lang_name: string;
+	};
+	tags: Tag[];
 }
 
-export default function RecordDivs() {
+interface EditLog extends Log {
+	id: number;
+}
+
+interface recordDivsProps {
+	personID: number;
+	selectedFilters: Filter[];
+	selectedSort: Sort | undefined;
+}
+
+export default function RecordDivs({ personID, selectedFilters, selectedSort }: recordDivsProps) {
 	const [modalOpen, setModalOpen] = useState(-1);
 	const [editOpen, setEditOpen] = useState(-1);
 
-	const [records, setRecords] = useState<Record[]>();
+	const [records, setRecords] = useState<Record[]>([]);
+	const [editLog, setEditLog] = useState<EditLog>({header: '', language: '', time: 0, date: '', description: '', rating: 0, tags: [], id: 0});
 	const [isLoading, setIsLoading] = useState(false);
+
+	//const records: Record[] = [{log: {id: 1, name: "Hello", description: "test", time: 24, date: 1674725162, language: 'Rust', rating: 4, tags: [], tags_id: []}}, {log: {id: 1, name: "Hello", description: "test", time: 24, date: 1674725162, language: 'Rust', rating: 4, tags: [], tags_id: []}}, {log: {id: 1, name: "Hello", description: "test", time: 24, date: 1674725162, language: 'Rust', rating: 4, tags: [], tags_id: []}}];
+	
+	// TODO
+	// After Jakub finishes the endpoint, complete it
+	async function deleteRecord(id: number) {
+		let res = await fetch(`http://localhost:3000/api/persons/logs/${personID}`, {
+			method: 'DELETE',
+		});
+
+		if (res.status == 0) {}
+	}
+
+	function handleChange(event: React.ChangeEvent<HTMLInputElement>) {
+		setEditLog({...editLog, [event.target.name]: event.target.value});
+	}
+
+	function handleTagChange(tags: Tag[]) {
+		setEditLog({...editLog, tags: tags});
+	}
+
+	function handleLangChange(lang: Language) {
+		setEditLog({...editLog, language: lang.name});
+	}
+
+	function handleTextAreaChange(event: React.ChangeEvent<HTMLTextAreaElement>) {
+		setEditLog({...editLog, [event.target.name]: event.target.value});
+	}
+
+	function getDate(unixtimestamp: number) {
+		const date = new Date(unixtimestamp * 1000);
+		const year = date.getFullYear();
+		const month = date.getMonth() + 1;
+		const day = date.getDate();
+
+		return year + '-' + month + '-' + day;
+	}
+
+	function editModal(id: number) {
+		setEditOpen(id);
+		setEditLog({
+			header: records[id].log.name,
+			description: records[id].log.description,
+			language: records[id].log.lang_name,
+			time: records[id].log.time,
+			date: getDate(records[id].log.date),
+			rating: records[id].log.rating,
+			tags: records[id].tags,
+			id: editOpen,
+		});
+	}
 
 	useEffect(() => {
 		setIsLoading(true);
-		fetch('https://localhost:3000/api/logs')
-			.then((res) => res.json())
+		if (selectedFilters.length > 0 && selectedSort) {
+			fetch(`http://localhost:3000/api/persons/logs/${personID}?sort=[${selectedSort}]`)
+			.then((res) => res?res.json():console.log(res))
 			.then((data) => {
+				console.log(data);
 				setRecords(data);
 				setIsLoading(false);
 		})
-	}, []);
+		} else {
+			fetch(`http://localhost:3000/api/persons/logs/${personID}`)
+			.then((res) => res?res.json():console.log(res))
+			.then((data) => {
+				console.log(data);
+				setRecords(data);
+				setIsLoading(false);
+		})
+		}
+	}, [personID, selectedFilters, selectedSort]);
+
+	// TODO
+	// After Jakub finishes the endpoint, complete it
+	async function sendEdited(event: React.FormEvent<HTMLFormElement>) {
+		event.preventDefault();
+
+		if (editLog.id > 0) {
+			const res = await fetch(`http://localhost:3000/api/persons/log/${personID}`, {
+				method: 'PUT',
+			});
+		} else {
+			alert("No log opened");
+		}
+	}
 
 	if (isLoading) return <h3 className={Modals.center} >Loading...</h3>
 
@@ -49,45 +136,44 @@ export default function RecordDivs() {
 
       {records?.map(record => (
         <div key={record.log.id} className={Record.record} >
-          <button onClick={() => setModalOpen(record.log.id)} className={Record.h2} >{record.log.language} - {record.log.time} min</button>
+          <button onClick={() => setModalOpen(record.log.id)} className={Record.h2} >{record.log.lang_name} - {record.log.time} min</button>
 					<button onClick={() => setModalOpen(record.log.id)} className={Record.h3} >{record.log.rating}/10</button>
-					<button onClick={() => setEditOpen(record.log.id)} >
+					<button onClick={() => editModal(record.log.id)} >
 						<FontAwesomeIcon icon={faPencil} height={28} />
 					</button>
-					<button>
+					<button onClick={() => deleteRecord(record.log.id)} >
 						<FontAwesomeIcon icon={faTrash} height={28} />
 					</button>
         </div>
       ))}
 
 			{
-			//TODO
-			//Create a separate component for editing log
-			//Send it to db
+			// TODO
+			// Create a separate component for editing log
 			}
 			<Dialog open={editOpen >= 0} onClose={() => setEditOpen(-1)} >
 				<Dialog.Panel className={Modals.modal} >
-					<form className={Modals.addForm} >
-						<input defaultValue={records?records[editOpen].log.name:''} name="header" className={Modals.addInput} required />
+					<form className={Modals.addForm} onSubmit={sendEdited} >
+						<input value={editLog.header} name="header" className={Modals.addInput} onChange={handleChange} required />
 
 						<div className={Modals.inputFields} >
-							<ChooseTagsPopup/>
+							<ChooseTagsPopup onChange={handleTagChange} />
 
-							<input defaultValue={records?records[editOpen].log.language:''} name="language" className={Modals.addInput} required />
+							<ChooseLangPopup onChange={handleLangChange} />
 						</div>
 
 						<div className={Modals.inputFields} >
-							<input defaultValue={records?records[editOpen].log.time:''} type="number" min="1" name="time" className={Modals.addInput} required />
+							<input value={editLog.time} type="number" min="1" name="time" className={Modals.addInput} onChange={handleChange} required />
 
-							<input defaultValue={records?records[editOpen].log.date:''} type="date" name="date" className={Modals.addInput} required />
+							<input value={editLog.date} type="date" name="date" className={Modals.addInput} onChange={handleChange} required />
 						</div>
 
-						<textarea defaultValue={records?records[editOpen].log.description:''} name="description" />
+						<textarea value={editLog.description} name="description" onChange={handleTextAreaChange} />
 
 						<div>
 							<label htmlFor='Rating' >Rate yourself:</label>
 							<br/>
-							<input defaultValue={records?records[editOpen].log.rating:''} type="range" min="0" max="10" name="rating" required />
+							<input value={editLog.rating} type="range" min="0" max="10" name="rating" onChange={handleChange} required />
 						</div>
 
 						<button type="submit" className={Modals.submit} >Save edited</button>
@@ -101,25 +187,25 @@ export default function RecordDivs() {
 			</Dialog>
 
 			{
-			//TODO
-			//Create separate component
+			// TODO
+			// Create separate component
 			}
 			<Dialog open={modalOpen >= 0} onClose={() => setModalOpen(-1)} >
 				<Dialog.Panel className={Modals.modal} >
 
 					<div className={Modals.header} >
-						<h2>{records?records[modalOpen].log.name:''}</h2>
-						<h3>{records?records[modalOpen].log.language:''}</h3>
+						<h2>{records?records[modalOpen]?.log.name:''}</h2>
+						<h3>{records?records[modalOpen]?.log.lang_name:''}</h3>
 					</div>
 
 					<div className={Modals.body} >
-						<h4>{records?records[modalOpen].log.description:''}</h4>
+						<h4>{records?records[modalOpen]?.log.description:''}</h4>
 					</div>
 
-					<p className={Modals.time} >{records?records[modalOpen].log.time:''} min</p>
+					<p className={Modals.time} >{records?records[modalOpen]?.log.time:''} min</p>
 
 					<div className={Modals.progressBar} >
-						<div className={Modals.progressBarFiller} >{records?records[modalOpen].log.rating:''}</div>
+						<div className={Modals.progressBarFiller} >{records?records[modalOpen]?.log.rating:''}</div>
 					</div>
 
 					<button className={Modals.closeButton} onClick={() => setModalOpen(-1)} >

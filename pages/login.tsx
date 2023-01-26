@@ -21,7 +21,7 @@ function Login({ setLoginData }: Props) {
 		event.preventDefault();
 
 		try {
-			const res = await fetch(`https://localhost:3000/api/persons/${formData.id}`);
+			const res = await fetch(`http://localhost:3000/api/persons/${formData.id}`);
 			if (!res.ok) throw res;
 			const data = await res.json();
 			if (data && data.password == formData.password) {
@@ -32,7 +32,7 @@ function Login({ setLoginData }: Props) {
 			}
 		}
 		catch (error) {
-			console.log(error);
+			console.error(error);
 		}
 	}
 

@@ -11,17 +11,19 @@ interface TagProps {
 }
 
 function Tags({ selectedTags, setSelectedTags }: TagProps) {
-	const [tags, setTags] = useState<Tag[]>([]);
+	//const [tags, setTags] = useState<Tag[]>([]);
 	const [editTag, setEditTag] = useState<Tag>({name: '', description: '', color: '', id: 0});
 	const [editTagOpen, setEditTagOpen] = useState(false);
 
-	//const tags: Tag[] = [{id: 1, name: 'Tag', color: 'blue', description: ''}, {id: 2, name: 'Taggg', color: 'blue', description: ''}, {id: 3, name: 'Tag4', color: 'red', description: ''}, ];
+	const tags: Tag[] = [{id: 1, name: 'Tag', color: 'blue', description: ''}, {id: 2, name: 'Taggg', color: 'blue', description: ''}, {id: 3, name: 'Tag4', color: 'red', description: ''}, ];
 
+	/*
 	useEffect(() => {
 		fetch('http://localhost:3000/api/tags')
 			.then((res) => res.json())
 			.then((data) => setTags(data))
 	}, []);
+	*/
 
 	function handleSelect(element: Tag) {
 		if (!selectedTags.find((e) => e.name === element.name)) {
@@ -40,9 +42,7 @@ function Tags({ selectedTags, setSelectedTags }: TagProps) {
 		let res = await fetch(`http://api/tags/${tag.id}`, {
 			method: 'DELETE',
 		});
-		// TODO
-		// Exchange for the right status
-		if (res.status != 0) {
+		if (res.status != 200) {
 			console.error(res);
 		}
 	}
@@ -65,9 +65,7 @@ function Tags({ selectedTags, setSelectedTags }: TagProps) {
 				'Content-Type': 'apllication/json',
 			},
 		});
-		// TODO
-		// Change for the right status
-		if (res.status != 0) {
+		if (res.status != 200) {
 			console.error(res);
 		}
 	}
@@ -88,11 +86,22 @@ function Tags({ selectedTags, setSelectedTags }: TagProps) {
 					// add styles
 					}
 					<Dialog open={editTagOpen} onClose={() => setEditTagOpen(false)} >
-						<Dialog.Panel className={[Modals.modal].join(" ")} >
+						<Dialog.Panel className={[Modals.tagModal].join(" ")} >
 							<form className={Modals.addForm} onSubmit={handleEditTagSubmit} >
-								<input placeholder='Name' name='name' value={editTag.name} onChange={handleChangeEditTag} className={Modals.addInput} required />
-								<input placeholder='Description' name='description' value={editTag.description} onChange={handleChangeEditTag} className={Modals.addInput} />
-								<input placeholder='Color' name='color' value={editTag.color} onChange={handleChangeEditTag} className={Modals.addInput} />
+								<h2>Tag</h2>
+								<div>
+									<input placeholder='Name' name='name' value={editTag.name} onChange={handleChangeEditTag} className={Modals.addInput} required />
+									<label>Name</label>
+								</div>
+								<div>
+									<input placeholder='Description' name='description' value={editTag.description} onChange={handleChangeEditTag} className={Modals.addInput} />
+									<label>Description</label>
+								</div>
+								<div>
+									<input placeholder='Color' name='color' value={editTag.color} onChange={handleChangeEditTag} className={Modals.addInput} />
+									<label>Color</label>
+								</div>
+								<button type="submit" onClick={() => setEditTagOpen(false)}>Submit</button>
 							</form>
 						</Dialog.Panel>
 					</Dialog>

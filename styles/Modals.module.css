@@ -18,6 +18,25 @@
 	text-align: center;
 }
 
+.tagModal {
+	background-color: #262626;
+	border: white 2px solid;
+	border-radius: 20px;
+	width: 35rem;
+	height: 35rem;
+	position: absolute;
+	top: calc(50% - 21rem);
+	left: calc(50% - 17.5rem);
+	padding: 2rem;
+	text-align: center;
+}
+
+.tagModal div {
+	display: flex;
+	flex-direction: column;
+	text-align: center;
+}
+
 .inputFields {
 	display: flex;
 	justify-content: space-evenly;

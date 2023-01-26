@@ -21,9 +21,7 @@ function Login({ setLoginData }: Props) {
 		event.preventDefault();
 
 		const res = await fetch(`http://localhost:3000/api/persons/${formData.id}`);
-		// TODO
-		// Exchange this for the right status msg
-		if (!res.ok) {
+		if (res.status != 200) {
 			console.error(res);
 		};
 		const data = await res.json();

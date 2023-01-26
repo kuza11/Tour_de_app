@@ -24,10 +24,6 @@
 	right: 1rem;
 }
 
-.filterButt {
-	right: 7rem;
-}
-
 .popup {
 	display: flex;
 	flex-direction: column;
@@ -42,11 +38,6 @@
 .sort {
 	top: 4.5rem;
 	right: 1rem;
-}
-
-.filter {
-	top: 4.5rem;
-	right: 7.5rem;
 }
 
 .popup > button {

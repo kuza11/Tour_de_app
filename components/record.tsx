@@ -6,7 +6,7 @@ import { faPencil, faTrash, faX, faClose } from '@fortawesome/free-solid-svg-ico
 import React, { useEffect, useState } from 'react';
 import { ChooseTagsPopup } from './tags';
 import ChooseLangPopup, { Language } from './languages';
-import { Log, Filter, Sort } from '../pages';
+import { Log, Sort } from '../pages';
 import { Tag } from './tags';
 
 interface Record {
@@ -30,12 +30,11 @@ interface EditLog extends Log {
 
 interface recordDivsProps {
 	personID: number;
-	selectedFilters: Filter[];
 	selectedSort: Sort | undefined;
 	selectedTags: Tag[];
 }
 
-export default function RecordDivs({ personID, selectedFilters, selectedSort, selectedTags }: recordDivsProps) {
+export default function RecordDivs({ personID, selectedSort, selectedTags }: recordDivsProps) {
 	const [modalOpen, setModalOpen] = useState(-1);
 	const [editOpen, setEditOpen] = useState(-1);
 
@@ -45,14 +44,13 @@ export default function RecordDivs({ personID, selectedFilters, selectedSort, se
 
 	//const records: Record[] = [{log: {id: 1, name: "Hello", description: "test", time: 24, date: 1674725162, language: 'Rust', rating: 4, tags: [], tags_id: []}}, {log: {id: 1, name: "Hello", description: "test", time: 24, date: 1674725162, language: 'Rust', rating: 4, tags: [], tags_id: []}}, {log: {id: 1, name: "Hello", description: "test", time: 24, date: 1674725162, language: 'Rust', rating: 4, tags: [], tags_id: []}}];
 	
-	// TODO
-	// After Jakub finishes the endpoint, complete it
 	async function deleteRecord(id: number) {
-		let res = await fetch(`http://localhost:3000/api/persons/logs/${personID}`, {
+		let res = await fetch(`http://localhost:3000/api/persons/logs/${personID}/${id}`, {
 			method: 'DELETE',
 		});
-
-		if (res.status == 0) {}
+		if (res.status == 200) {
+			console.error(res);
+		}
 	}
 
 	function handleChange(event: React.ChangeEvent<HTMLInputElement>) {
@@ -94,38 +92,35 @@ export default function RecordDivs({ personID, selectedFilters, selectedSort, se
 		});
 	}
 
-	// TODO
-	// After Jakub finishes, add sorting, filters, and tags
 	useEffect(() => {
 		setIsLoading(true);
-		if (selectedFilters.length > 0 && selectedSort) {
-			fetch(`http://localhost:3000/api/persons/logs/${personID}?sort=[${selectedSort}]`)
-			.then((res) => res?res.json():console.log(res))
-			.then((data) => {
-				console.log(data);
-				setRecords(data);
-				setIsLoading(false);
-		})
-		} else {
-			fetch(`http://localhost:3000/api/persons/logs/${personID}`)
-			.then((res) => res?res.json():console.log(res))
-			.then((data) => {
-				console.log(data);
-				setRecords(data);
-				setIsLoading(false);
-		})
+		let url = `http://localhost:3000/api/persons/logs/${personID}`
+		if (selectedSort) {
+			url += "?sort=" + selectedSort.url + "&order=" + selectedSort.order;
 		}
-	}, [personID, selectedFilters, selectedSort, selectedTags]);
+		if (selectedTags.length > 0) {
+			url += "&filter=" + JSON.stringify(selectedTags);
+		}
 
-	// TODO
-	// After Jakub finishes the endpoint, complete it
+		fetch(url)
+			.then((res) => res?res.json():console.log(res))
+			.then((data) => {
+				console.log(data);
+				setRecords(data);
+				setIsLoading(false);
+		})
+	}, [personID, selectedSort, selectedTags]);
+
 	async function sendEdited(event: React.FormEvent<HTMLFormElement>) {
 		event.preventDefault();
 
 		if (editLog.id > 0) {
-			const res = await fetch(`http://localhost:3000/api/persons/log/${personID}`, {
+			const res = await fetch(`http://localhost:3000/api/persons/log/${personID}/${editLog.id}`, {
 				method: 'PUT',
 			});
+			if (res.status != 200) {
+				console.error(res);
+			}
 		} else {
 			alert("No log opened");
 		}

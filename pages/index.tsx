@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import Head from 'next/head';
 import Link from 'next/link';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faArrowDownWideShort, faClose, faFilter, faHome, faPencil, faPlus, faTag, faTrash, faUser } from '@fortawesome/free-solid-svg-icons';
+import { faArrowDownWideShort, faClose, faHome, faPencil, faPlus, faTag, faTrash, faUser } from '@fortawesome/free-solid-svg-icons';
 import { Dialog } from '@headlessui/react';
 import Styles from '../styles/Home.module.css';
 import LeftBar from '../styles/LeftBar.module.css';
@@ -14,47 +14,10 @@ import ChooseLangPopup, { Language } from '../components/languages';
 import Image from 'next/image';
 import Logo from '../public/Programmers Journal.png';
 
-export interface Filter {
-	name: string;
-}
-
-export interface filterProps {
-	selectedFilters: Filter[];
-	setSelectedFilters: (selectedFilters: Filter[]) => void;
-}
-
-function Filter({ selectedFilters, setSelectedFilters }: filterProps) {
-	const [isVisible, setIsVisible] = useState(false);
-
-	// TODO
-	// Create filters
-	let filters: Filter[] = [{name: "Filter1"}, {name: "Filter1"}];
-
-	function handleSelect(element: Filter) {
-		if (!selectedFilters.find((e) => e.name === element.name)) {
-			setSelectedFilters([...selectedFilters, element]);
-		} else {
-			setSelectedFilters(selectedFilters.filter((e) => e.name != element.name));
-		}
-	}
-
-	return (
-		<div>
-			<button onClick={() => setIsVisible(!isVisible)} className={[Styles.filterButt, Styles.butt].join(" ")} ><FontAwesomeIcon icon={faFilter} height={32} />Filter</button>
-
-			{isVisible && (
-				<div className={[Styles.filter, Styles.popup].join(" ")} >
-					{filters.map((e, index) => (
-						<button key={index} onClick={() => handleSelect(e)}>{e.name}</button>
-					))}
-				</div>
-			)}
-		</div>
-	);
-}
-
 export interface Sort {
 	name: string;
+	url: string;
+	order: string;
 }
 
 export interface sortProps {
@@ -65,9 +28,18 @@ export interface sortProps {
 function Sort({ selectedSort, setSelectedSort }: sortProps) {
 	const [isVisible, setIsVisible] = useState(false);
 
-	let sorts: Sort[] = [{name: "A-Z"}, {name: "Z-A"}, {name: "Old-New"}, {name: "New-Old"}, {name: "Long-Short"}, {name: "Short-Long"}];
+	let sorts: Sort[] = [
+		{name: "Old-New", url: "date", order: "asc"},
+		{name: "New-Old", url: "date", order: "desc"},
+		{name: "Long-Short", url: "time", order: "desc"},
+		{name: "Short-Long", url: "time", order: "asc"},
+		{name: "Worst-Best", url: "rating", order: "asc"},
+		{name: "Best-Worst", url: "rating", order: "desc"},
+		{name: "A-Z", url: "language", order: "asc"},
+		{name: "Z-A", url: "language", order: "desc"},
+	];
 
-	function handleSelect(element: Filter) {
+	function handleSelect(element: Sort) {
 		if (selectedSort?.name === element.name) {
 			setSelectedSort(undefined);
 		} else {
@@ -126,7 +98,6 @@ export default function Index({ loginData, setLoginData }: Props) {
 	const [editProfileOpen, setEditProfileOpen] = useState(false);
 	const [editProfile, setEditProfile] = useState<Profile>({username: loginData.username, password: '', password_check: '', id: loginData.id});
 
-	const [selectedFilters, setSelectedFilters] = useState<Filter[]>([]);
 	const [selectedSort, setSelectedSort] = useState<Sort | undefined>(undefined);
 	const [selectedTags, setSelectedTags] = useState<Tag[]>([]);
 	const [signedIn, setSignedIn] = useState(false);
@@ -137,9 +108,7 @@ export default function Index({ loginData, setLoginData }: Props) {
 			const res = await fetch(`http://localhost:3000/api/persons/${loginData.id}`, {
 				method: 'DELETE',
 			});
-			// TODO
-			// Add the right code
-			if (res.status != 0) {
+			if (res.status != 200) {
 				console.error(res);
 				alert("There was an error deleting your account");
 			} else {
@@ -168,9 +137,7 @@ export default function Index({ loginData, setLoginData }: Props) {
 						'Content-Type': 'application/json',
 					},
 				});
-				// TODO
-				// Change for the right status
-				if (res.status != 0) {
+				if (res.status != 200) {
 					console.error(res);
 				}
 			} else {
@@ -248,8 +215,6 @@ export default function Index({ loginData, setLoginData }: Props) {
 
 			<div id={Styles.body}>
 
-				<Filter selectedFilters={selectedFilters} setSelectedFilters={setSelectedFilters} />
-
 				<Sort selectedSort={selectedSort} setSelectedSort={setSelectedSort} />
 
 				<div id={LeftBar.LeftBar}>
@@ -283,8 +248,6 @@ export default function Index({ loginData, setLoginData }: Props) {
 
 					{
 					// TODO
-					// Upravit profil
-					// Odstranit profil
 					// Styles
 					}
 					{signedIn && (
@@ -303,7 +266,7 @@ export default function Index({ loginData, setLoginData }: Props) {
 
 				<main id={Styles.main} >
 
-					<RecordDivs personID={loginData.id} selectedFilters={selectedFilters} selectedSort={selectedSort} selectedTags={selectedTags} />
+					<RecordDivs personID={loginData.id} selectedSort={selectedSort} selectedTags={selectedTags} />
 
 				</main>
 

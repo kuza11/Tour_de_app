@@ -221,12 +221,12 @@ export default function Index({ loginData, setLoginData }: Props) {
 				<div id={LeftBar.LeftBar}>
 					<Image src={Logo} alt="Logo" />
 
+					<div id={LeftBar.Spacer} ></div>
+
 					<Link className={[LeftBar.Items, LeftBar.homeGoalLink].join(" ")} href="/" >
 						<FontAwesomeIcon icon={faHome} height={32} />
 						<h2>Home</h2>
 					</Link>
-
-					<div id={LeftBar.Spacer} ></div>
 
 					<div className={LeftBar.Items} >
 						<FontAwesomeIcon icon={faTag} height={32} />
@@ -236,9 +236,7 @@ export default function Index({ loginData, setLoginData }: Props) {
 						</button>
 					</div>
 
-					<ul>
-						<Tags selectedTags={selectedTags} setSelectedTags={setSelectedTags} />
-					</ul>
+					<Tags selectedTags={selectedTags} setSelectedTags={setSelectedTags} />
 
 					{loginData.id <= 0 && (
 						<Link href="/login" className={LeftBar.Items} >
@@ -252,8 +250,8 @@ export default function Index({ loginData, setLoginData }: Props) {
 					// Styles
 					}
 					{loginData.id > 0 && (
-						<div className={LeftBar.Items} >
-							<button onClick={() => setLoginData({username: '', id: 0})} className={LeftBar.Items} >Sign out</button>
+						<div className={LeftBar.Items2} >
+							<button onClick={() => setLoginData({username: '', id: 0})} >Sign out</button>
 							<button onClick={() => setEditProfileOpen(true)} ><FontAwesomeIcon icon={faPencil} height={18} /></button>
 							<button onClick={handleDeleteProfile} ><FontAwesomeIcon icon={faTrash} height={18} /></button>
 						</div>
@@ -267,7 +265,9 @@ export default function Index({ loginData, setLoginData }: Props) {
 
 				</main>
 
-				<button id={Styles.addButton} onClick={() => setAddOpen(true)} ><FontAwesomeIcon icon={faPlus} height={64} /></button>
+				{loginData.id > 0 && (
+					<button id={Styles.addButton} onClick={() => setAddOpen(true)} ><FontAwesomeIcon icon={faPlus} height={64} /></button>
+				)}
 
 			</div>
 

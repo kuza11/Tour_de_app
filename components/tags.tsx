@@ -5,6 +5,7 @@ import React, { useState, useEffect } from "react";
 import Styles from '../styles/Home.module.css';
 import Modals from '../styles/Modals.module.css';
 import Login from '../styles/Login.module.css';
+import LeftBar from '../styles/LeftBar.module.css';
 
 interface TagProps {
 	selectedTags: Tag[];
@@ -12,19 +13,15 @@ interface TagProps {
 }
 
 function Tags({ selectedTags, setSelectedTags }: TagProps) {
-	//const [tags, setTags] = useState<Tag[]>([]);
+	const [tags, setTags] = useState<Tag[]>([]);
 	const [editTag, setEditTag] = useState<Tag>({name: '', description: '', color: '', id: 0});
 	const [editTagOpen, setEditTagOpen] = useState(false);
 
-	const tags: Tag[] = [{id: 1, name: 'Tag', color: 'blue', description: ''}, {id: 2, name: 'Taggg', color: 'blue', description: ''}, {id: 3, name: 'Tag4', color: 'red', description: ''}, ];
-
-	/*
 	useEffect(() => {
 		fetch('http://localhost:3000/api/tags')
 			.then((res) => res.json())
 			.then((data) => setTags(data))
 	}, []);
-	*/
 
 	function handleSelect(element: Tag) {
 		if (!selectedTags.find((e) => e.name === element.name)) {
@@ -76,11 +73,11 @@ function Tags({ selectedTags, setSelectedTags }: TagProps) {
 	}
 
   return (
-		<div>
+		<ul className={LeftBar.tagList} >
 			{tags.map((tag: Tag, index: number) => (
-				<div key={index}>
-					<button style={{ backgroundColor: tags.includes(selectedTags[index]) ? tag.color : 'transparent' }} onClick={() => handleSelect(tag)}>
-						Click me to change color
+				<div key={index} className={LeftBar.tag} >
+					<button style={{ backgroundColor: selectedTags.includes(tag) ?  'transparent' : tag.color }} onClick={() => handleSelect(tag)} className={LeftBar.tagButton} >
+						{tag.name}
 					</button>
 					<button onClick={() => handleEdit(tag)} ><FontAwesomeIcon icon={faPencil} height={12} /></button>
 					<button onClick={() => handleDelete(tag)} ><FontAwesomeIcon icon={faTrash} height={12} /></button>
@@ -97,7 +94,7 @@ function Tags({ selectedTags, setSelectedTags }: TagProps) {
 					</form>
 				</Dialog.Panel>
 			</Dialog>
-		</div>
+		</ul>
 	);
 }
 

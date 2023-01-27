@@ -7,13 +7,33 @@
 	text-align: start;
 }
 
+.Items2 {
+	display: grid;
+	grid-template-columns: auto 18px 18px;
+	gap: 0 1rem;
+	align-items: center;
+	text-align: start;
+}
+
 #Spacer {
 	height: 100%;
 	background-color: white;
 }
 
 .tag {
-	list-style: none;
+	display: grid;
+	width: 200px;
+	grid-template-columns: auto 18px 18px;
+	align-items: center;
+	text-align: start;
+}
+
+.tagButton {
+	border-radius: 10px;
+}
+
+.tagList {
+	overflow: scroll;
 }
 
 .homeGoalLink {
@@ -28,7 +48,6 @@
 #LeftBar {
 	grid-area: leftBar;
 	display: grid;
-	grid-template-rows: 3rem 4rem 2px 4rem auto 4rem;
+	grid-template-rows: 3rem 2px 4rem 4rem auto 4rem;
 	background-color: #262626;
 }
-

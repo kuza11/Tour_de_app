@@ -104,9 +104,8 @@ export default function RecordDivs({ personID, selectedSort, selectedTags }: rec
 		}
 
 		fetch(url)
-			.then((res) => res?res.json():console.log(res))
+			.then((res) => res.json())
 			.then((data) => {
-				console.log(data);
 				setRecords(data);
 				setIsLoading(false);
 		})

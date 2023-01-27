@@ -25,7 +25,7 @@ function Login({ setLoginData }: Props) {
 			console.error(res);
 		};
 		const data = await res.json();
-		if (data && data.password == formData.password) {
+		if (data.password == formData.password) {
 			setLoginData({username: formData.username, id: formData.id});
 			Router.push('/');
 		} else {

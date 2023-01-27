@@ -101,7 +101,6 @@ export default function Index({ loginData, setLoginData }: Props) {
 
 	const [selectedSort, setSelectedSort] = useState<Sort | undefined>(undefined);
 	const [selectedTags, setSelectedTags] = useState<Tag[]>([]);
-	const [signedIn, setSignedIn] = useState(true);
 
 
 	async function handleDeleteProfile() {
@@ -114,7 +113,6 @@ export default function Index({ loginData, setLoginData }: Props) {
 				alert("There was an error deleting your account");
 			} else {
 				setLoginData({id: 0, username: ''});
-				setSignedIn(false);
 			}
 		}
 	}
@@ -147,10 +145,6 @@ export default function Index({ loginData, setLoginData }: Props) {
 				alert("Password does not match!");
 			}
 		}
-	}
-
-	if (loginData.id != 0) {
-		setSignedIn(true);
 	}
 
 	function handleTagChange(tags: Tag[]) {
@@ -246,7 +240,7 @@ export default function Index({ loginData, setLoginData }: Props) {
 						<Tags selectedTags={selectedTags} setSelectedTags={setSelectedTags} />
 					</ul>
 
-					{!signedIn && (
+					{loginData.id <= 0 && (
 						<Link href="/login" className={LeftBar.Items} >
 							<FontAwesomeIcon icon={faUser} height={32} />
 							<h2>Sign in</h2>
@@ -257,9 +251,9 @@ export default function Index({ loginData, setLoginData }: Props) {
 					// TODO
 					// Styles
 					}
-					{signedIn && (
+					{loginData.id > 0 && (
 						<div className={LeftBar.Items} >
-							<button onClick={() => {setLoginData({username: '', id: 0}); setSignedIn(false);}} className={LeftBar.Items} >Sign out</button>
+							<button onClick={() => setLoginData({username: '', id: 0})} className={LeftBar.Items} >Sign out</button>
 							<button onClick={() => setEditProfileOpen(true)} ><FontAwesomeIcon icon={faPencil} height={18} /></button>
 							<button onClick={handleDeleteProfile} ><FontAwesomeIcon icon={faTrash} height={18} /></button>
 						</div>
